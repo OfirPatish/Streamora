@@ -1,7 +1,7 @@
 export interface SearchResult {
   id: number;
   title: string;
-  type: "movie" | "series" | "person";
+  type: "movie" | "series";
   year?: string;
   overview?: string;
   poster_path?: string;
@@ -17,7 +17,7 @@ export interface SearchSuggestion {
 }
 
 export interface SearchFilters {
-  type: "all" | "movie" | "series" | "person";
+  type: "all" | "movie" | "series";
   year?: string;
   genre?: string;
   rating?: number;

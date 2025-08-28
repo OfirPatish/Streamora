@@ -2,6 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Header } from "@/components/layout/Header";
+import { Sidebar } from "@/components/layout/Sidebar";
 import { SearchResults } from "@/components/search/SearchResults";
 import { SearchFilters } from "@/components/search/SearchFilters";
 import { useSearch } from "@/components/search/useSearch";
@@ -21,10 +23,12 @@ export default function SearchPage() {
   }, [initialQuery, query, setQuery]);
 
   return (
-    <div className="min-h-screen w-full">
-      <div className="flex w-full">
-        {/* Main Content */}
-        <main className="flex-1 w-full px-6 py-8">
+    <div className="flex min-h-screen w-full">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 px-6 py-8">
           <div className="max-w-4xl mx-auto space-y-6">
             {/* Page Header */}
             <div className="space-y-2">

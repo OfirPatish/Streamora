@@ -1,7 +1,7 @@
 import { SearchFilters as SearchFiltersType } from "./types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Film, Tv, User, X } from "lucide-react";
+import { Film, Tv, X } from "lucide-react";
 
 interface SearchFiltersProps {
   filters: SearchFiltersType;
@@ -14,7 +14,6 @@ export function SearchFilters({ filters, onFiltersChange, resultsCount }: Search
     { value: "all", label: "All", icon: null },
     { value: "movie", label: "Movies", icon: Film },
     { value: "series", label: "TV Shows", icon: Tv },
-    { value: "person", label: "People", icon: User },
   ] as const;
 
   const hasActiveFilters = filters.type !== "all" || filters.year || filters.genre || filters.rating;

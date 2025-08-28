@@ -1,7 +1,9 @@
 import { SearchResult } from "./types";
-import { Star, Calendar, User, Film, Tv } from "lucide-react";
+import { Star, Calendar, Film, Tv } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { getTMDBImageUrl } from "@/lib/api";
+import Image from "next/image";
 import Link from "next/link";
 
 interface SearchResultsProps {
@@ -57,8 +59,6 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
         return <Film className="h-4 w-4" />;
       case "series":
         return <Tv className="h-4 w-4" />;
-      case "person":
-        return <User className="h-4 w-4" />;
       default:
         return <Film className="h-4 w-4" />;
     }
@@ -70,8 +70,6 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
         return "bg-blue-600";
       case "series":
         return "bg-green-600";
-      case "person":
-        return "bg-purple-600";
       default:
         return "bg-gray-600";
     }
@@ -83,8 +81,6 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
         return `/movies/${result.id}`;
       case "series":
         return `/series/${result.id}`;
-      case "person":
-        return `/person/${result.id}`;
       default:
         return "#";
     }
@@ -101,9 +97,19 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
           <Card className="hover:bg-gray-800/50 transition-colors cursor-pointer group">
             <CardContent className="p-4">
               <div className="flex gap-4">
-                {/* Placeholder for poster/profile image */}
-                <div className="w-16 h-24 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
-                  {getTypeIcon(result.type)}
+                {/* TMDB Image */}
+                <div className="w-16 h-24 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center flex-shrink-0 relative overflow-hidden">
+                  {result.poster_path ? (
+                    <Image
+                      src={getTMDBImageUrl(result.poster_path || null, "poster", "small") || ""}
+                      alt={result.title}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  ) : (
+                    getTypeIcon(result.type)
+                  )}
                 </div>
 
                 <div className="flex-1 min-w-0">

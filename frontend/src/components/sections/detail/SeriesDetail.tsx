@@ -2,77 +2,37 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Play, Star, Calendar, Users, Info, Tv } from "lucide-react";
+import { useSeriesDetails } from "@/hooks";
+import { getTMDBImageUrl } from "@/lib/api";
+import Image from "next/image";
 
 interface SeriesDetailProps {
   id: string;
 }
 
 export function SeriesDetail({ id }: SeriesDetailProps) {
-  // Mock data based on backend API structure
-  const series = {
-    id: parseInt(id),
-    name: "Breaking Bad",
-    original_name: "Breaking Bad",
-    overview: "When an unassuming high school chemistry teacher discovers he has a rare form of lung cancer, he decides to team up with a former student and secure his family's financial future as he partners with his former student to turn a used RV into a rolling meth lab.",
-    tagline: "Chemistry is the study of change...",
-    first_air_date: "2008-01-20",
-    last_air_date: "2013-09-29",
-    status: "Ended",
-    type: "Scripted",
-    vote_average: 9.5,
-    vote_count: 15000,
-    popularity: 95.0,
-    number_of_seasons: 5,
-    number_of_episodes: 62,
-    genres: [
-      { id: 18, name: "Drama" },
-      { id: 80, name: "Crime" },
-      { id: 9648, name: "Mystery" }
-    ],
-    networks: [
-      { name: "AMC", logo_path: null }
-    ],
-    production_companies: [
-      { name: "Sony Pictures Television", logo_path: null },
-      { name: "High Bridge Entertainment", logo_path: null }
-    ],
-    credits: {
-      cast: [
-        { id: 1, name: "Bryan Cranston", character: "Walter White", profile_path: null },
-        { id: 2, name: "Aaron Paul", character: "Jesse Pinkman", profile_path: null },
-        { id: 3, name: "Anna Gunn", character: "Skyler White", profile_path: null },
-        { id: 4, name: "RJ Mitte", character: "Walter White Jr.", profile_path: null }
-      ],
-      crew: [
-        { id: 1, name: "Vince Gilligan", job: "Creator", department: "Creator" },
-        { id: 2, name: "Vince Gilligan", job: "Executive Producer", department: "Production" }
-      ]
-    },
-    seasons: [
-      {
-        id: 1,
-        name: "Season 1",
-        season_number: 1,
-        episode_count: 7,
-        air_date: "2008-01-20",
-        overview: "High school chemistry teacher Walter White's life is suddenly transformed by a dire medical diagnosis."
-      },
-      {
-        id: 2,
-        name: "Season 2",
-        season_number: 2,
-        episode_count: 13,
-        air_date: "2009-03-08",
-        overview: "Walter White's transformation into the criminal mastermind known as Heisenberg continues."
-      }
-    ],
-    videos: {
-      results: [
-        { key: "abc123", name: "Official Trailer", site: "YouTube", type: "Trailer" },
-        { key: "def456", name: "Season 1 Recap", site: "YouTube", type: "Featurette" }
-      ]
-    }
-  };
+  const { data: series, loading, error } = useSeriesDetails(parseInt(id));
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-700 rounded w-1/2 mb-4"></div>
+          <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !series) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-red-400 mb-4">Failed to load series details</div>
+        <div className="text-gray-400">Series ID: {id}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6">

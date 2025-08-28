@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { SearchResult, SearchSuggestion, SearchFilters } from "./types";
-import { mockSearchAPI, mockSuggestionsAPI } from "./mockSearchData";
+import { mockSuggestionsAPI } from "./mockSearchData";
+import { useMultiSearch, MultiSearchResult } from "@/hooks/useApiSearch";
 
 export function useSearch() {
   const [query, setQuery] = useState("");
@@ -10,6 +11,31 @@ export function useSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>({ type: "all" });
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  // Real API search hook
+  const { search: multiSearch, loading: apiLoading, error: apiError } = useMultiSearch();
+
+  // Transform TMDB MultiSearchResult to our SearchResult format (movies and series only)
+  const transformSearchResults = useCallback((apiResults: MultiSearchResult[]): SearchResult[] => {
+    return apiResults
+      .filter((result) => result.media_type === "movie" || result.media_type === "tv") // Only movies and series
+      .map((result) => ({
+        id: result.id,
+        title: result.title || result.name || "",
+        type: result.media_type === "tv" ? "series" : "movie",
+        year:
+          result.media_type === "movie"
+            ? result.release_date
+              ? new Date(result.release_date).getFullYear().toString()
+              : ""
+            : result.first_air_date
+            ? new Date(result.first_air_date).getFullYear().toString()
+            : "",
+        overview: result.overview || "",
+        rating: result.vote_average || undefined,
+        poster_path: result.poster_path || undefined,
+      }));
+  }, []);
 
   // Debounced search
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -42,8 +68,21 @@ export function useSearch() {
     async (searchQuery: string) => {
       setIsLoading(true);
       try {
-        const searchResults = await mockSearchAPI(searchQuery, filters);
-        setResults(searchResults);
+        // Use real TMDB API search
+        const apiResponse = await multiSearch(searchQuery, 1);
+
+        if (apiResponse?.results) {
+          let searchResults = transformSearchResults(apiResponse.results);
+
+          // Apply client-side filtering if needed
+          if (filters.type !== "all") {
+            searchResults = searchResults.filter((result) => result.type === filters.type);
+          }
+
+          setResults(searchResults);
+        } else {
+          setResults([]);
+        }
       } catch (error) {
         console.error("Search error:", error);
         setResults([]);
@@ -51,7 +90,7 @@ export function useSearch() {
         setIsLoading(false);
       }
     },
-    [filters]
+    [filters, multiSearch, transformSearchResults]
   );
 
   const fetchSuggestions = useCallback(async (searchQuery: string) => {

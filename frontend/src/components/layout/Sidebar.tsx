@@ -15,8 +15,8 @@ export function Sidebar() {
     { icon: TrendingUp, label: "Trending", href: "/trending" },
     { icon: Star, label: "Top Rated", href: "/top-rated" },
     { icon: Clock, label: "Recently Added", href: "/recent" },
-    { icon: Heart, label: "My List", href: "/my-list" },
-    { icon: History, label: "Continue Watching", href: "/continue" },
+    { icon: Heart, label: "Watchlist", href: "/watchlist" },
+    { icon: History, label: "Recently Viewed", href: "/history" },
   ];
 
   const genres = [

@@ -1,94 +1,107 @@
+"use client";
+
 import { ContentGrid } from "./ContentGrid";
-import { Typography } from "@/components/ui/typography";
+import { useNowPlayingMovies, useTopRatedMovies, useOnTheAirSeries, useTopRatedSeries, Movie, Series } from "@/hooks";
 
-// Mock data based on backend API endpoints
-const mockTrendingMovies = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 1,
-  title: "Trending Movie",
-  year: "2024",
-  genre: "Action",
-  type: "movie" as const,
-  progress: i === 1 ? 65 : undefined, // Continue watching for second item
-}));
+// Transform API data to ContentGrid format
+function transformMovieData(movies: Movie[] | undefined): Array<{
+  id: number;
+  title: string;
+  year: string;
+  genre: string;
+  type: "movie" | "series";
+  poster_path?: string | null;
+  vote_average?: number;
+}> {
+  if (!movies || !Array.isArray(movies)) {
+    return [];
+  }
 
-const mockPopularMovies = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 101,
-  title: "Popular Movie",
-  year: "2024",
-  genre: "Drama",
-  type: "movie" as const,
-}));
+  return movies.slice(0, 6).map((movie) => ({
+    id: movie.id,
+    title: movie.title,
+    year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : "TBA",
+    genre: movie.genres?.[0]?.name || "Movie",
+    type: "movie" as const,
+    poster_path: movie.poster_path,
+    vote_average: movie.vote_average,
+  }));
+}
 
-const mockNowPlayingMovies = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 201,
-  title: "Now Playing",
-  year: "2024",
-  genre: "Comedy",
-  type: "movie" as const,
-}));
+function transformSeriesData(series: Series[] | undefined): Array<{
+  id: number;
+  title: string;
+  year: string;
+  genre: string;
+  type: "movie" | "series";
+  poster_path?: string | null;
+  vote_average?: number;
+}> {
+  if (!series || !Array.isArray(series)) {
+    return [];
+  }
 
-const mockUpcomingMovies = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 301,
-  title: "Upcoming Movie",
-  year: "2024",
-  genre: "Sci-Fi",
-  type: "movie" as const,
-}));
-
-const mockPopularSeries = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 401,
-  title: "Popular Series",
-  year: "2024",
-  genre: "Drama",
-  type: "series" as const,
-}));
-
-const mockTopRatedSeries = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 501,
-  title: "Top Rated Series",
-  year: "2024",
-  genre: "Thriller",
-  type: "series" as const,
-}));
-
-const mockOnTheAirSeries = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 601,
-  title: "On The Air",
-  year: "2024",
-  genre: "Comedy",
-  type: "series" as const,
-}));
+  return series.slice(0, 6).map((show) => ({
+    id: show.id,
+    title: show.name,
+    year: show.first_air_date ? new Date(show.first_air_date).getFullYear().toString() : "TBA",
+    genre: show.genres?.[0]?.name || "Series",
+    type: "series" as const,
+    poster_path: show.poster_path,
+    vote_average: show.vote_average,
+  }));
+}
 
 export function ContentSections() {
+  // Fetch data for new releases and featured content
+  const {
+    data: nowPlayingMovies,
+    loading: loadingNowPlayingMovies,
+    error: errorNowPlayingMovies,
+  } = useNowPlayingMovies();
+  const { data: topRatedMovies, loading: loadingTopRatedMovies, error: errorTopRatedMovies } = useTopRatedMovies();
+  const { data: onTheAirSeries, loading: loadingOnTheAirSeries, error: errorOnTheAirSeries } = useOnTheAirSeries();
+  const { data: topRatedSeries, loading: loadingTopRatedSeries, error: errorTopRatedSeries } = useTopRatedSeries();
+
+  // Transform data for components
+  const transformedNowPlayingMovies = transformMovieData(nowPlayingMovies?.results);
+  const transformedTopRatedMovies = transformMovieData(topRatedMovies?.results);
+  const transformedOnTheAirSeries = transformSeriesData(onTheAirSeries?.results);
+  const transformedTopRatedSeries = transformSeriesData(topRatedSeries?.results);
+
   return (
-    <section className="space-y-8 w-full px-6">
-      {/* Movies Section */}
-      <div className="space-y-8">
-        <Typography variant="h3" className="text-muted-foreground">
-          Movies
-        </Typography>
+    <section className="space-y-12 w-full px-6">
+      {/* New Movie Releases */}
+      <ContentGrid
+        title="New Movie Releases"
+        items={transformedNowPlayingMovies}
+        loading={loadingNowPlayingMovies}
+        error={errorNowPlayingMovies}
+      />
 
-        <ContentGrid title="Trending Now" items={mockTrendingMovies} />
+      {/* Featured Movies */}
+      <ContentGrid
+        title="Featured Movies"
+        items={transformedTopRatedMovies}
+        loading={loadingTopRatedMovies}
+        error={errorTopRatedMovies}
+      />
 
-        <ContentGrid title="Popular Movies" items={mockPopularMovies} />
+      {/* New Series */}
+      <ContentGrid
+        title="New Series"
+        items={transformedOnTheAirSeries}
+        loading={loadingOnTheAirSeries}
+        error={errorOnTheAirSeries}
+      />
 
-        <ContentGrid title="Now Playing" items={mockNowPlayingMovies} />
-
-        <ContentGrid title="Upcoming Releases" items={mockUpcomingMovies} />
-      </div>
-
-      {/* TV Series Section */}
-      <div className="space-y-8">
-        <Typography variant="h3" className="text-muted-foreground">
-          TV Series
-        </Typography>
-
-        <ContentGrid title="Popular TV Series" items={mockPopularSeries} />
-
-        <ContentGrid title="Top Rated Series" items={mockTopRatedSeries} />
-
-        <ContentGrid title="On The Air" items={mockOnTheAirSeries} />
-      </div>
+      {/* Featured Series */}
+      <ContentGrid
+        title="Featured Series"
+        items={transformedTopRatedSeries}
+        loading={loadingTopRatedSeries}
+        error={errorTopRatedSeries}
+      />
     </section>
   );
 }

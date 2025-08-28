@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { HeroSection } from "@/components/sections/hero";
 import { ContentSections } from "@/components/sections/content-grid";
+import { CacheDebugger } from "@/components/debug/CacheDebugger";
 
 export default function Home() {
   return (
@@ -15,6 +16,9 @@ export default function Home() {
           <ContentSections />
         </main>
       </div>
+
+      {/* Cache Debugger - only shows in development */}
+      <CacheDebugger />
     </div>
   );
 }

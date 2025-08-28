@@ -1,6 +1,6 @@
 # 🎬 Streamora
 
-A Stremio-like streaming application with a Node.js/Express/TypeScript backend and Next.js frontend, integrated with The Movie Database (TMDB) API.
+A content discovery platform similar to Stremio/TMDB, focusing on movie and TV series information, trailers, and recommendations. Built with a Node.js/Express/TypeScript backend and Next.js frontend, integrated with The Movie Database (TMDB) API.
 
 ## 🚀 Quick Start
 

@@ -9,4 +9,6 @@ export interface FeaturedContent {
   type: "movie" | "series";
   isNew: boolean;
   isTrending: boolean;
+  backdrop_path?: string | null;
+  poster_path?: string | null;
 }

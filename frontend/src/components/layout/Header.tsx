@@ -82,7 +82,7 @@ export function Header() {
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => setIsOpen(true)}
               onKeyPress={handleKeyPress}
-              placeholder="Search movies, series, actors..."
+              placeholder="Discover movies, series, actors..."
               className="pl-10 pr-20"
             />
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">

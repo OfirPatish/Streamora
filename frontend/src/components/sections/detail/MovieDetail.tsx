@@ -2,53 +2,37 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Play, Star, Clock, Calendar, Users, Info } from "lucide-react";
+import { useMovieDetails } from "@/hooks";
+import { getTMDBImageUrl } from "@/lib/api";
+import Image from "next/image";
 
 interface MovieDetailProps {
   id: string;
 }
 
 export function MovieDetail({ id }: MovieDetailProps) {
-  // Mock data based on backend API structure
-  const movie = {
-    id: parseInt(id),
-    title: "The Dark Knight",
-    original_title: "The Dark Knight",
-    overview: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-    tagline: "Why So Serious?",
-    release_date: "2008-07-18",
-    runtime: 152,
-    status: "Released",
-    vote_average: 9.0,
-    vote_count: 30000,
-    popularity: 100.0,
-    genres: [
-      { id: 28, name: "Action" },
-      { id: 18, name: "Drama" },
-      { id: 80, name: "Crime" }
-    ],
-    production_companies: [
-      { name: "Warner Bros. Pictures", logo_path: null },
-      { name: "Legendary Pictures", logo_path: null }
-    ],
-    credits: {
-      cast: [
-        { id: 1, name: "Christian Bale", character: "Bruce Wayne / Batman", profile_path: null },
-        { id: 2, name: "Heath Ledger", character: "Joker", profile_path: null },
-        { id: 3, name: "Aaron Eckhart", character: "Harvey Dent", profile_path: null },
-        { id: 4, name: "Maggie Gyllenhaal", character: "Rachel Dawes", profile_path: null }
-      ],
-      crew: [
-        { id: 1, name: "Christopher Nolan", job: "Director", department: "Directing" },
-        { id: 2, name: "Jonathan Nolan", job: "Screenplay", department: "Writing" }
-      ]
-    },
-    videos: {
-      results: [
-        { key: "abc123", name: "Official Trailer", site: "YouTube", type: "Trailer" },
-        { key: "def456", name: "Behind the Scenes", site: "YouTube", type: "Featurette" }
-      ]
-    }
-  };
+  const { data: movie, loading, error } = useMovieDetails(parseInt(id));
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-700 rounded w-1/2 mb-4"></div>
+          <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !movie) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-red-400 mb-4">Failed to load movie details</div>
+        <div className="text-gray-400">Movie ID: {id}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6">
