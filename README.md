@@ -1,90 +1,6 @@
 # 🎬 Streamora
 
-A Stremio-like streaming application built with Node.js/Express/TypeScript backend and Next.js frontend, integrated with The Movie Database (TMDB) API.
-
-![Streamora](https://img.shields.io/badge/Streamora-Streaming%20Platform-blue)
-![Node.js](https://img.shields.io/badge/Node.js-18+-green)
-![Next.js](https://img.shields.io/badge/Next.js-14-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue)
-
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Quick Start](#-quick-start)
-- [API Documentation](#-api-documentation)
-- [Development](#-development)
-- [Contributing](#-contributing)
-
-## ✨ Features
-
-### 🎯 Core Features
-
-- **Movie & TV Series Discovery** - Browse popular, top-rated, and trending content
-- **Comprehensive Detail Pages** - Detailed information for movies and series
-- **Responsive Design** - Full-width layout optimized for all devices
-- **Dynamic Routing** - SEO-friendly URLs for content pages
-- **Modern UI/UX** - Built with Shadcn/ui components
-
-### 🎨 UI Components
-
-- **Hero Section** - Featured content with call-to-action
-- **Content Grids** - Organized content rows with pagination
-- **Navigation** - Header with search and sidebar with categories
-- **Detail Pages** - Comprehensive movie/series information
-- **Cast & Crew** - Actor information and production details
-
-### 🔧 Technical Features
-
-- **TypeScript** - Full type safety across the stack
-- **API Integration** - TMDB API for real movie/series data
-- **Security** - CORS, Helmet, Rate limiting
-- **Performance** - Compression, caching, optimized builds
-
-## 🛠️ Tech Stack
-
-### Backend
-
-- **Runtime:** Node.js with TypeScript
-- **Framework:** Express.js
-- **API:** TMDB (The Movie Database)
-- **Security:** Helmet, CORS, Rate Limiting
-- **Logging:** Morgan
-- **Compression:** Gzip
-
-### Frontend
-
-- **Framework:** Next.js 14 with App Router
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **UI Library:** Shadcn/ui
-- **Icons:** Lucide React
-
-## 📁 Project Structure
-
-```
-streamora/
-├── backend/                    # Node.js/Express/TypeScript API
-│   ├── src/
-│   │   ├── index.ts           # Main server entry point
-│   │   ├── routes/            # API route handlers
-│   │   ├── services/          # TMDB API integration
-│   │   ├── middleware/        # Error handling & security
-│   │   └── types/            # TypeScript interfaces
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── STREAMORA_BACKEND_SUMMARY.md
-├── frontend/                  # Next.js 14 App Router
-│   ├── src/
-│   │   ├── app/              # Next.js App Router pages
-│   │   ├── components/       # React components
-│   │   └── globals.css
-│   └── package.json
-├── README.md
-├── STREAMORA_AI_REFERENCE.md
-└── .gitignore
-```
+A Stremio-like streaming application with a Node.js/Express/TypeScript backend and Next.js frontend, integrated with The Movie Database (TMDB) API.
 
 ## 🚀 Quick Start
 
@@ -92,148 +8,114 @@ streamora/
 
 - Node.js 18+
 - npm or yarn
-- TMDB API key ([Get one here](https://www.themoviedb.org/settings/api))
+- TMDB API key (for backend)
 
-### 1. Clone the Repository
+### Installation
 
-```bash
-git clone https://github.com/OfirPatish/Streamora.git
-cd Streamora
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/OfirPatish/Streamora.git
+   cd Streamora
+   ```
+
+2. **Install all dependencies**
+
+   ```bash
+   npm run install:all
+   ```
+
+3. **Set up environment variables**
+
+   ```bash
+   # Backend
+   cp backend/env.example backend/.env
+   # Edit backend/.env and add your TMDB_API_KEY
+   ```
+
+4. **Start development servers**
+   ```bash
+   npm run dev
+   ```
+
+This will start both:
+
+- **Backend**: http://localhost:3001
+- **Frontend**: http://localhost:3000
+
+## 📁 Project Structure
+
+```
+streamora/
+├── backend/          # Node.js/Express/TypeScript API
+├── frontend/         # Next.js 14 App Router
+├── package.json      # Root scripts and workspace config
+└── README.md
 ```
 
-### 2. Backend Setup
+## 🛠️ Available Scripts
 
-```bash
-cd backend
-npm install
-cp .env.example .env
-# Edit .env with your TMDB API key
-npm run dev
-```
+### Root Level Commands
 
-### 3. Frontend Setup
+- `npm run dev` - Start both backend and frontend in development mode
+- `npm run build` - Build both backend and frontend for production
+- `npm run start` - Start both services in production mode
+- `npm run install:all` - Install dependencies for all packages
+- `npm run clean` - Clean all node_modules and build artifacts
+- `npm run lint` - Run linting for both backend and frontend
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### Individual Service Commands
 
-### 4. Access the Application
+- `npm run dev:backend` - Start only backend development server
+- `npm run dev:frontend` - Start only frontend development server
+- `npm run build:backend` - Build only backend
+- `npm run build:frontend` - Build only frontend
 
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:3001
-
-## 📚 API Documentation
-
-The backend provides a comprehensive REST API with the following endpoints:
-
-### Movies
-
-- `GET /api/movies/popular` - Popular movies
-- `GET /api/movies/top-rated` - Top rated movies
-- `GET /api/movies/now-playing` - Currently in theaters
-- `GET /api/movies/upcoming` - Upcoming releases
-- `GET /api/movies/{id}` - Movie details
-- `GET /api/movies/{id}/recommendations` - Similar movies
-- `GET /api/movies/{id}/credits` - Cast & crew
-- `GET /api/movies/{id}/videos` - Trailers & videos
-
-### TV Series
-
-- `GET /api/series/popular` - Popular TV series
-- `GET /api/series/top-rated` - Top rated series
-- `GET /api/series/on-the-air` - Currently airing
-- `GET /api/series/airing-today` - Airing today
-- `GET /api/series/{id}` - Series details
-- `GET /api/series/{id}/recommendations` - Similar series
-- `GET /api/series/{id}/seasons/{num}` - Season details
-
-### Search & Discovery
-
-- `GET /api/search/multi?query={term}` - Search all content
-- `GET /api/search/movies?query={term}` - Search movies
-- `GET /api/search/series?query={term}` - Search series
-- `GET /api/search/genres/movies` - Movie genres
-- `GET /api/search/genres/series` - TV genres
-- `GET /api/search/discover/movies` - Discover movies with filters
-- `GET /api/search/discover/series` - Discover series with filters
-
-For complete API documentation, see [STREAMORA_BACKEND_SUMMARY.md](backend/STREAMORA_BACKEND_SUMMARY.md)
-
-## 🛠️ Development
+## 🔧 Development
 
 ### Backend Development
 
-```bash
-cd backend
-npm run dev          # Development with nodemon
-npm run build        # Build TypeScript
-npm start           # Production start
-```
+- **Port**: 3001
+- **API**: TMDB integration with 20+ endpoints
+- **Features**: Movies, TV series, search, discovery
 
 ### Frontend Development
 
-```bash
-cd frontend
-npm run dev         # Development server
-npm run build       # Production build
-npm start          # Production start
-```
+- **Port**: 3000
+- **Framework**: Next.js 14 with App Router
+- **UI**: Shadcn/ui components with Tailwind CSS
+- **Features**: Responsive design, dynamic routing, content grids
 
-### Environment Variables
+## 📚 Documentation
 
-#### Backend (.env)
+- [Backend API Documentation](./backend/STREAMORA_BACKEND_SUMMARY.md)
+- [AI Reference Guide](./STREAMORA_AI_REFERENCE.md)
 
-```env
-PORT=3001
-NODE_ENV=development
-TMDB_API_KEY=your_tmdb_api_key_here
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-CORS_ORIGIN=http://localhost:3000
-LOG_LEVEL=info
-```
-
-## 🎯 Current Status
+## 🎯 Features
 
 ### ✅ Completed
 
-- **Backend:** Full API with TMDB integration
-- **Frontend:** Complete layout and detail pages
-- **Navigation:** Dynamic routing and clickable components
-- **Design:** Responsive layout with Shadcn components
-- **Structure:** Well-organized, modular codebase
+- Full backend API with TMDB integration
+- Complete frontend layout and detail pages
+- Dynamic routing for movies and series
+- Responsive design with Shadcn components
+- Root-level development scripts
 
-### 🔄 In Progress
+### 🔄 Ready for
 
-- **API Integration:** Connecting frontend to backend
-- **Search Functionality:** Implementing search features
-- **User Features:** Favorites, watchlist, etc.
+- API integration (replace mock data)
+- Search functionality
+- User features (favorites, watchlist)
+- Visual enhancements and styling
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [TMDB](https://www.themoviedb.org/) for providing the movie and TV series data
-- [Shadcn/ui](https://ui.shadcn.com/) for the beautiful UI components
-- [Next.js](https://nextjs.org/) for the amazing React framework
-- [Express.js](https://expressjs.com/) for the robust backend framework
-
-## 📞 Support
-
-If you have any questions or need help, please open an issue on GitHub.
-
----
-
-**Made with ❤️ by [Ofir Patish](https://github.com/OfirPatish)**
+MIT License - see LICENSE file for details

@@ -116,5 +116,71 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Enhanced typography for streaming platform */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Streaming-specific typography utilities */
+  .text-gradient {
+    @apply bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent;
+  }
+
+  /* Line clamping utilities for content cards */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+@layer utilities {
+  /* Streaming platform specific utilities */
+  .content-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 w-full;
+  }
+
+  .poster-aspect {
+    @apply aspect-[2/3];
+  }
+
+  .backdrop-aspect {
+    @apply aspect-video;
+  }
+
+  /* Typography scale for streaming */
+  .text-hero {
+    @apply text-5xl lg:text-7xl font-black tracking-tight;
+  }
+
+  .text-section-title {
+    @apply text-2xl font-bold mb-6;
+  }
+
+  .text-card-title {
+    @apply text-sm font-medium leading-tight line-clamp-2;
+  }
+
+  .text-card-subtitle {
+    @apply text-xs text-muted-foreground line-clamp-1;
   }
 }

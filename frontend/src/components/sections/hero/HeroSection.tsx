@@ -1,60 +1,55 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+"use client";
 
-interface HeroSectionProps {
-  title?: string;
-  description?: string;
-  badgeText?: string;
-}
+import { useState, useEffect } from "react";
+import { featuredContent } from "./featuredData";
+import { HeroContent } from "./HeroContent";
+import { HeroCarouselControls } from "./HeroCarouselControls";
 
-export function HeroSection({ 
-  title = "Featured Movie Title",
-  description = "Experience the latest blockbuster with stunning visuals and an incredible storyline that will keep you on the edge of your seat.",
-  badgeText = "Featured"
-}: HeroSectionProps) {
+export function HeroSection() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Auto-rotate featured content every 8 seconds
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % featuredContent.length);
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying]);
+
+  const currentContent = featuredContent[currentIndex];
+
+  const handleIndexChange = (index: number) => {
+    setCurrentIndex(index);
+    setIsAutoPlaying(false);
+  };
+
+  const handleAutoPlayToggle = () => {
+    setIsAutoPlaying(!isAutoPlaying);
+  };
+
   return (
-    <section className="mb-8">
-      <div className="relative h-96 rounded-lg overflow-hidden border w-full">
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute bottom-0 left-0 p-8">
-          <Badge variant="secondary" className="mb-4">
-            {badgeText}
-          </Badge>
-          <h1 className="text-4xl font-bold mb-2">{title}</h1>
-          <p className="mb-4 max-w-md">{description}</p>
-          <div className="flex space-x-4">
-            <Button size="lg">
-              <Play className="h-4 w-4 mr-2" />
-              Watch Now
-            </Button>
-            <Button variant="outline" size="lg">
-              <Info className="h-4 w-4 mr-2" />
-              More Info
-            </Button>
-          </div>
-        </div>
+    <section className="w-full px-6 py-8">
+      <div className="relative w-full h-[70vh] min-h-[500px] rounded-xl overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] z-10" />
+
+        {/* Content */}
+        <HeroContent content={currentContent} />
+
+        {/* Carousel Controls */}
+        <HeroCarouselControls
+          totalItems={featuredContent.length}
+          currentIndex={currentIndex}
+          onIndexChange={handleIndexChange}
+          onAutoPlayToggle={handleAutoPlayToggle}
+          isAutoPlaying={isAutoPlaying}
+        />
       </div>
     </section>
   );
 }
-
-// Icons for the buttons
-const Play = ({ className }: { className?: string }) => (
-  <svg className={className} fill="currentColor" viewBox="0 0 20 20">
-    <path
-      fillRule="evenodd"
-      d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
-
-const Info = ({ className }: { className?: string }) => (
-  <svg className={className} fill="currentColor" viewBox="0 0 20 20">
-    <path
-      fillRule="evenodd"
-      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-      clipRule="evenodd"
-    />
-  </svg>
-);

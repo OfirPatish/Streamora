@@ -104,6 +104,7 @@ router.get("/airing-today", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const seriesId = parseInt(req.params.id);
+
     if (isNaN(seriesId)) {
       return res.status(400).json({
         success: false,
@@ -171,10 +172,10 @@ router.get("/:id/recommendations", async (req: Request, res: Response) => {
 });
 
 // Get season details
-router.get("/:id/seasons/:seasonNumber", async (req: Request, res: Response) => {
+router.get("/:id/seasons/:num", async (req: Request, res: Response) => {
   try {
     const seriesId = parseInt(req.params.id);
-    const seasonNumber = parseInt(req.params.seasonNumber);
+    const seasonNumber = parseInt(req.params.num);
 
     if (isNaN(seriesId) || isNaN(seasonNumber)) {
       return res.status(400).json({
@@ -207,11 +208,11 @@ router.get("/:id/seasons/:seasonNumber", async (req: Request, res: Response) => 
 });
 
 // Get episode details
-router.get("/:id/seasons/:seasonNumber/episodes/:episodeNumber", async (req: Request, res: Response) => {
+router.get("/:id/seasons/:num/episodes/:episode", async (req: Request, res: Response) => {
   try {
     const seriesId = parseInt(req.params.id);
-    const seasonNumber = parseInt(req.params.seasonNumber);
-    const episodeNumber = parseInt(req.params.episodeNumber);
+    const seasonNumber = parseInt(req.params.num);
+    const episodeNumber = parseInt(req.params.episode);
 
     if (isNaN(seriesId) || isNaN(seasonNumber) || isNaN(episodeNumber)) {
       return res.status(400).json({

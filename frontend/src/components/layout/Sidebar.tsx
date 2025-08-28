@@ -38,8 +38,8 @@ export function Sidebar() {
   return (
     <ShadcnSidebar className="hidden lg:block">
       <SidebarContent>
-        <SidebarHeader>
-          <h3 className="text-lg font-semibold">Browse</h3>
+        <SidebarHeader className="pt-4 pr-2">
+          <h3 className="text-2xl font-bold ml-4 mt-2">Streamora</h3>
         </SidebarHeader>
 
         {/* Content Types */}

@@ -1,4 +1,5 @@
 import { ContentGrid } from "./ContentGrid";
+import { Typography } from "@/components/ui/typography";
 
 // Mock data based on backend API endpoints
 const mockTrendingMovies = Array.from({ length: 6 }, (_, i) => ({
@@ -7,6 +8,7 @@ const mockTrendingMovies = Array.from({ length: 6 }, (_, i) => ({
   year: "2024",
   genre: "Action",
   type: "movie" as const,
+  progress: i === 1 ? 65 : undefined, // Continue watching for second item
 }));
 
 const mockPopularMovies = Array.from({ length: 6 }, (_, i) => ({
@@ -59,50 +61,33 @@ const mockOnTheAirSeries = Array.from({ length: 6 }, (_, i) => ({
 
 export function ContentSections() {
   return (
-    <section className="space-y-8 w-full">
+    <section className="space-y-8 w-full px-6">
       {/* Movies Section */}
       <div className="space-y-8">
-        <h3 className="text-xl font-semibold text-muted-foreground">Movies</h3>
-        
-        <ContentGrid 
-          title="Trending Now" 
-          items={mockTrendingMovies}
-        />
-        
-        <ContentGrid 
-          title="Popular Movies" 
-          items={mockPopularMovies}
-        />
-        
-        <ContentGrid 
-          title="Now Playing" 
-          items={mockNowPlayingMovies}
-        />
-        
-        <ContentGrid 
-          title="Upcoming Releases" 
-          items={mockUpcomingMovies}
-        />
+        <Typography variant="h3" className="text-muted-foreground">
+          Movies
+        </Typography>
+
+        <ContentGrid title="Trending Now" items={mockTrendingMovies} />
+
+        <ContentGrid title="Popular Movies" items={mockPopularMovies} />
+
+        <ContentGrid title="Now Playing" items={mockNowPlayingMovies} />
+
+        <ContentGrid title="Upcoming Releases" items={mockUpcomingMovies} />
       </div>
 
       {/* TV Series Section */}
       <div className="space-y-8">
-        <h3 className="text-xl font-semibold text-muted-foreground">TV Series</h3>
-        
-        <ContentGrid 
-          title="Popular TV Series" 
-          items={mockPopularSeries}
-        />
-        
-        <ContentGrid 
-          title="Top Rated Series" 
-          items={mockTopRatedSeries}
-        />
-        
-        <ContentGrid 
-          title="On The Air" 
-          items={mockOnTheAirSeries}
-        />
+        <Typography variant="h3" className="text-muted-foreground">
+          TV Series
+        </Typography>
+
+        <ContentGrid title="Popular TV Series" items={mockPopularSeries} />
+
+        <ContentGrid title="Top Rated Series" items={mockTopRatedSeries} />
+
+        <ContentGrid title="On The Air" items={mockOnTheAirSeries} />
       </div>
     </section>
   );

@@ -1,6 +1,9 @@
 // Load environment variables FIRST, before any other imports
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+
+// Configure dotenv to look for .env file in the backend directory
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
 import express from "express";
 import cors from "cors";
@@ -14,6 +17,7 @@ import { notFoundHandler } from "./middleware/notFoundHandler";
 import { movieRoutes } from "./routes/movieRoutes";
 import { seriesRoutes } from "./routes/seriesRoutes";
 import { searchRoutes } from "./routes/searchRoutes";
+import healthRoutes from "./routes/healthRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -61,6 +65,7 @@ app.get("/health", (req, res) => {
 app.use("/api/movies", movieRoutes);
 app.use("/api/series", seriesRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/health", healthRoutes);
 
 // API documentation endpoint
 app.get("/api", (req, res) => {

@@ -4,17 +4,17 @@ import { ApiResponse } from "../types";
 
 const router = Router();
 
-// Multi-search (movies, series, people)
+// Multi-search endpoint
 router.get("/multi", async (req: Request, res: Response) => {
   try {
     const query = req.query.query as string;
     const page = parseInt(req.query.page as string) || 1;
 
-    if (!query || query.trim().length === 0) {
+    if (!query) {
       return res.status(400).json({
         success: false,
         error: {
-          message: "Search query is required",
+          message: "Query parameter is required",
         },
         timestamp: new Date().toISOString(),
       });
@@ -33,24 +33,24 @@ router.get("/multi", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: {
-        message: error instanceof Error ? error.message : "Failed to perform multi-search",
+        message: error instanceof Error ? error.message : "Failed to search",
       },
       timestamp: new Date().toISOString(),
     });
   }
 });
 
-// Search movies only
+// Search movies endpoint
 router.get("/movies", async (req: Request, res: Response) => {
   try {
     const query = req.query.query as string;
     const page = parseInt(req.query.page as string) || 1;
 
-    if (!query || query.trim().length === 0) {
+    if (!query) {
       return res.status(400).json({
         success: false,
         error: {
-          message: "Search query is required",
+          message: "Query parameter is required",
         },
         timestamp: new Date().toISOString(),
       });
@@ -76,17 +76,17 @@ router.get("/movies", async (req: Request, res: Response) => {
   }
 });
 
-// Search series only
+// Search series endpoint
 router.get("/series", async (req: Request, res: Response) => {
   try {
     const query = req.query.query as string;
     const page = parseInt(req.query.page as string) || 1;
 
-    if (!query || query.trim().length === 0) {
+    if (!query) {
       return res.status(400).json({
         success: false,
         error: {
-          message: "Search query is required",
+          message: "Query parameter is required",
         },
         timestamp: new Date().toISOString(),
       });
@@ -158,11 +158,11 @@ router.get("/genres/series", async (req: Request, res: Response) => {
   }
 });
 
-// Discover movies with filters
+// Discover movies
 router.get("/discover/movies", async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const sortBy = (req.query.sort_by as string) || "popularity.desc";
+    const sortBy = req.query.sort_by as string;
     const year = req.query.year ? parseInt(req.query.year as string) : undefined;
     const genre = req.query.genre ? parseInt(req.query.genre as string) : undefined;
     const voteAverageGte = req.query.vote_average_gte ? parseFloat(req.query.vote_average_gte as string) : undefined;
@@ -170,9 +170,9 @@ router.get("/discover/movies", async (req: Request, res: Response) => {
     const results = await tmdbService.discoverMovies({
       page,
       sort_by: sortBy,
-      ...(year && { year }),
-      ...(genre && { genre }),
-      ...(voteAverageGte && { vote_average_gte: voteAverageGte }),
+      year,
+      genre,
+      vote_average_gte: voteAverageGte,
     });
 
     const response: ApiResponse<typeof results> = {
@@ -193,11 +193,11 @@ router.get("/discover/movies", async (req: Request, res: Response) => {
   }
 });
 
-// Discover series with filters
+// Discover series
 router.get("/discover/series", async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const sortBy = (req.query.sort_by as string) || "popularity.desc";
+    const sortBy = req.query.sort_by as string;
     const year = req.query.year ? parseInt(req.query.year as string) : undefined;
     const genre = req.query.genre ? parseInt(req.query.genre as string) : undefined;
     const voteAverageGte = req.query.vote_average_gte ? parseFloat(req.query.vote_average_gte as string) : undefined;
@@ -205,9 +205,9 @@ router.get("/discover/series", async (req: Request, res: Response) => {
     const results = await tmdbService.discoverSeries({
       page,
       sort_by: sortBy,
-      ...(year && { year }),
-      ...(genre && { genre }),
-      ...(voteAverageGte && { vote_average_gte: voteAverageGte }),
+      year,
+      genre,
+      vote_average_gte: voteAverageGte,
     });
 
     const response: ApiResponse<typeof results> = {

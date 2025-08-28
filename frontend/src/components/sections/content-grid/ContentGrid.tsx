@@ -1,4 +1,5 @@
 import { MovieCard } from "./movie-card";
+import { SectionTitle, Typography } from "@/components/ui/typography";
 
 interface ContentGridProps {
   title: string;
@@ -15,13 +16,15 @@ interface ContentGridProps {
 export function ContentGrid({ title, items, showViewAll = true }: ContentGridProps) {
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">{title}</h2>
+      <div className="flex items-center justify-between mb-6">
+        <SectionTitle className="mb-0">{title}</SectionTitle>
         {showViewAll && (
-          <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">View All</button>
+          <Typography variant="link" as="button" className="hover:text-primary transition-colors">
+            View All
+          </Typography>
         )}
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4 w-full">
+      <div className="content-grid">
         {items.map((item, index) => (
           <MovieCard
             key={item.id}
