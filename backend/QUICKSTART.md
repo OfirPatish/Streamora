@@ -94,7 +94,7 @@ node test-api.js
 1. **Frontend Development**: Create a React/Vue/Angular frontend
 2. **Database Integration**: Add user management and favorites
 3. **Authentication**: Implement user authentication
-4. **Caching**: Add Redis for better performance
+4. **Caching**: Frontend handles caching (no backend caching needed)
 5. **Deployment**: Deploy to cloud platforms
 
 ## 🆘 Troubleshooting

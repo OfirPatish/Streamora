@@ -1,6 +1,5 @@
-import { Header } from "@/components/layout/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { SeriesDetail } from "@/components/sections/detail/SeriesDetail";
+import { DesktopHeader, MobileHeader, MobileBottomNav } from "@/components/layout";
+import { SeriesDetail } from "@/components/features/series";
 
 interface SeriesPageProps {
   params: {
@@ -10,15 +9,16 @@ interface SeriesPageProps {
 
 export default function SeriesPage({ params }: SeriesPageProps) {
   return (
-    <div className="flex min-h-screen w-full">
-      <Sidebar />
+    <div className="min-h-screen w-full">
+      <DesktopHeader />
+      <MobileHeader />
 
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 p-6">
-          <SeriesDetail id={params.id} />
-        </main>
-      </div>
+      <main className="pb-20 lg:pb-0 p-6">
+        <SeriesDetail id={params.id} />
+      </main>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   );
 }

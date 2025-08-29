@@ -75,14 +75,32 @@ class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new ApiError(
-          errorData.message || `HTTP error! status: ${response.status}`,
-          response.status,
-          errorData.code
-        );
+        console.error("❌ API Error:", {
+          status: response.status,
+          errorData,
+          url,
+        });
+
+        // Handle backend error format
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        if (errorData.error && errorData.error.message) {
+          errorMessage = errorData.error.message;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+
+        throw new ApiError(errorMessage, response.status, errorData.code);
       }
 
-      return await response.json();
+      const responseData = await response.json();
+
+      // Handle backend ApiResponse wrapper format
+      if (responseData && typeof responseData === "object" && "success" in responseData && "data" in responseData) {
+        console.log("📦 API Response wrapped in ApiResponse format, extracting data field");
+        return responseData.data;
+      }
+
+      return responseData;
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;

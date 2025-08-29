@@ -1,6 +1,5 @@
-import { Header } from "@/components/layout/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { MovieDetail } from "@/components/sections/detail/MovieDetail";
+import { DesktopHeader, MobileHeader, MobileBottomNav } from "@/components/layout";
+import { MovieDetail } from "@/components/features/movies";
 
 interface MoviePageProps {
   params: {
@@ -10,15 +9,16 @@ interface MoviePageProps {
 
 export default function MoviePage({ params }: MoviePageProps) {
   return (
-    <div className="flex min-h-screen w-full">
-      <Sidebar />
+    <div className="min-h-screen w-full">
+      <DesktopHeader />
+      <MobileHeader />
 
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 p-6">
-          <MovieDetail id={params.id} />
-        </main>
-      </div>
+      <main className="pb-20 lg:pb-0 p-6">
+        <MovieDetail id={params.id} />
+      </main>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   );
 }

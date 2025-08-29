@@ -1,24 +1,19 @@
-import { Header } from "@/components/layout/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { HeroSection } from "@/components/sections/hero";
-import { ContentSections } from "@/components/sections/content-grid";
-import { CacheDebugger } from "@/components/debug/CacheDebugger";
+import { DesktopHeader, MobileHeader, MobileBottomNav } from "@/components/layout";
+import { HeroSection, HomeContent } from "@/components/features/home";
+import { DebugModal } from "@/components/debug/DebugModal";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen w-full">
-      <Sidebar />
+    <div className="min-h-screen w-full bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
+      <DesktopHeader />
+      <MobileHeader />
 
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1">
-          <HeroSection />
-          <ContentSections />
-        </main>
-      </div>
-
-      {/* Cache Debugger - only shows in development */}
-      <CacheDebugger />
+      <main className="pb-20 lg:pb-0">
+        <HeroSection />
+        <HomeContent />
+      </main>
+      <MobileBottomNav />
+      <DebugModal />
     </div>
   );
 }

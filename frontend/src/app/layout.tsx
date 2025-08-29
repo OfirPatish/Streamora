@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider } from "@/components/ui/sidebar";
+
+import { GlobalDataProvider } from "@/components/providers/GlobalDataProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,11 @@ export const metadata: Metadata = {
   description: "Discover and watch the latest movies and TV series on Streamora",
   keywords: "streaming, movies, tv series, entertainment, watch online",
   authors: [{ name: "Streamora Team" }],
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -27,9 +32,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} bg-black text-white antialiased`}>
-        <SidebarProvider>{children}</SidebarProvider>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} bg-gray-900 text-white antialiased`}
+        suppressHydrationWarning
+      >
+        <GlobalDataProvider>{children}</GlobalDataProvider>
       </body>
     </html>
   );
