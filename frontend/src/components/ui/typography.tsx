@@ -36,7 +36,7 @@ const typographyVariants = {
 
   // Streaming-specific
   heroTitle:
-    "text-5xl lg:text-7xl font-black tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent",
+    "text-5xl lg:text-7xl font-black tracking-tight text-foreground",
   cardTitle: "text-sm font-medium leading-tight line-clamp-2",
   cardSubtitle: "text-xs text-muted-foreground line-clamp-1",
   sectionTitle: "text-2xl font-bold mb-6",

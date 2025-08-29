@@ -24,7 +24,7 @@
     "lint:frontend": "cd frontend && npm run lint"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^9.2.1"
   },
   "keywords": [
     "streaming",

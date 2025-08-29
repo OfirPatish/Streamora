@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CacheDebugger } from "./CacheDebugger";
-import { GlobalDataDebugger } from "./GlobalDataDebugger";
+import { CacheDebug } from "./CacheDebug";
+import { DataDebugger } from "./DataDebugger";
 import { ApiTester } from "./ApiTester";
 
 export function DebugModal() {
@@ -58,13 +58,13 @@ export function DebugModal() {
                   {/* Global Data Status */}
                   <div className="bg-gray-800 border border-gray-700 rounded-lg p-3">
                     <h3 className="text-sm font-semibold text-green-400 mb-2">🌐 Global Data</h3>
-                    <GlobalDataDebugger refreshKey={refreshKey} />
+                    <DataDebugger refreshKey={refreshKey} />
                   </div>
 
                   {/* Cache Debugger */}
                   <div className="bg-gray-800 border border-gray-700 rounded-lg p-3">
                     <h3 className="text-sm font-semibold text-purple-400 mb-2">💾 Cache</h3>
-                    <CacheDebugger refreshKey={refreshKey} />
+                    <CacheDebug refreshKey={refreshKey} />
                   </div>
                 </div>
 

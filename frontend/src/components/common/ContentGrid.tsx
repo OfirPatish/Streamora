@@ -1,5 +1,5 @@
-import { MovieCard } from "./cards/MovieCard";
-import { MovieCardSkeleton } from "./skeletons/MovieCardSkeleton";
+import { MovieCard } from "./MovieCard";
+import { Skeleton } from "./Skeleton";
 import { SectionTitle, Typography } from "@/components/ui/typography";
 
 interface ContentGridProps {
@@ -34,7 +34,7 @@ export function ContentGrid({ title, items, showViewAll = true, loading = false,
       {error && (
         <div className="content-grid">
           <div className="col-span-full flex items-center justify-center py-8">
-            <Typography variant="muted" className="text-red-400">
+            <Typography variant="muted" className="text-destructive">
               Failed to load {title.toLowerCase()}: {error}
             </Typography>
           </div>
@@ -45,7 +45,7 @@ export function ContentGrid({ title, items, showViewAll = true, loading = false,
       {loading && (
         <div className="content-grid">
           {Array.from({ length: 6 }, (_, index) => (
-            <MovieCardSkeleton key={index} />
+            <Skeleton key={index} />
           ))}
         </div>
       )}

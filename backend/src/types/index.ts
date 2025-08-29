@@ -28,6 +28,47 @@ export interface MovieDetails extends Movie {
   spoken_languages: SpokenLanguage[];
   homepage: string;
   imdb_id: string;
+  // Nested properties from append_to_response
+  credits?: {
+    cast: Array<{
+      id: number;
+      name: string;
+      character: string;
+      profile_path: string | null;
+    }>;
+    crew: Array<{
+      id: number;
+      name: string;
+      job: string;
+      profile_path: string | null;
+    }>;
+  };
+  videos?: {
+    results: Array<{
+      key: string;
+      name: string;
+      type: string;
+      site: string;
+    }>;
+  };
+  images?: {
+    backdrops: Array<{
+      file_path: string;
+      width: number;
+      height: number;
+    }>;
+    posters: Array<{
+      file_path: string;
+      width: number;
+      height: number;
+    }>;
+  };
+  recommendations?: {
+    page: number;
+    results: Movie[];
+    total_pages: number;
+    total_results: number;
+  };
 }
 
 // Series related types
@@ -63,6 +104,47 @@ export interface SeriesDetails extends Series {
   last_air_date: string;
   networks: Network[];
   seasons: Season[];
+  // Nested properties from append_to_response
+  credits?: {
+    cast: Array<{
+      id: number;
+      name: string;
+      character: string;
+      profile_path: string | null;
+    }>;
+    crew: Array<{
+      id: number;
+      name: string;
+      job: string;
+      profile_path: string | null;
+    }>;
+  };
+  videos?: {
+    results: Array<{
+      key: string;
+      name: string;
+      type: string;
+      site: string;
+    }>;
+  };
+  images?: {
+    backdrops: Array<{
+      file_path: string;
+      width: number;
+      height: number;
+    }>;
+    posters: Array<{
+      file_path: string;
+      width: number;
+      height: number;
+    }>;
+  };
+  recommendations?: {
+    page: number;
+    results: Series[];
+    total_pages: number;
+    total_results: number;
+  };
 }
 
 export interface Season {
@@ -154,12 +236,12 @@ export interface SearchFilters {
   genre?: number;
   year?: number;
   rating?: number;
-  sort_by?: 'popularity' | 'vote_average' | 'release_date' | 'title';
-  sort_order?: 'asc' | 'desc';
+  sort_by?: "popularity" | "vote_average" | "release_date" | "title";
+  sort_order?: "asc" | "desc";
 }
 
 // Media types
-export type MediaType = 'movie' | 'tv' | 'person';
+export type MediaType = "movie" | "tv" | "person";
 
 export interface MediaItem {
   id: number;

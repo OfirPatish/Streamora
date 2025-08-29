@@ -2,8 +2,12 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { DesktopHeader, MobileHeader, MobileBottomNav } from "@/components/layout";
-import { SearchResults, SearchFilters, useSearch } from "@/components/features/search";
+import { DesktopHeader } from "@/components/layout/DesktopHeader";
+import { MobileHeader } from "@/components/layout/MobileHeader";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { SearchResults } from "@/components/search/SearchResults";
+import { SearchFilters } from "@/components/search/SearchFilters";
+import { useSearch } from "@/hooks/api/useSearch";
 import { Typography } from "@/components/ui/typography";
 
 export default function SearchPage() {
@@ -28,7 +32,7 @@ export default function SearchPage() {
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Page Header */}
           <div className="space-y-2">
-            <Typography variant="h2" className="text-white">
+            <Typography variant="h2" className="text-foreground">
               Search Results
             </Typography>
             {query && <Typography variant="muted">Showing results for "{query}"</Typography>}

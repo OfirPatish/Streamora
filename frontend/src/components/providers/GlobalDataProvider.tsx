@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useGlobalData } from "@/hooks/useGlobalData";
+import { useGlobalData } from "@/hooks/global/useGlobalData";
 
 interface GlobalDataProviderProps {
   children: React.ReactNode;

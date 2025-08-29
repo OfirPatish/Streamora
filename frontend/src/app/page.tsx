@@ -1,10 +1,13 @@
-import { DesktopHeader, MobileHeader, MobileBottomNav } from "@/components/layout";
-import { HeroSection, HomeContent } from "@/components/features/home";
+import { DesktopHeader } from "@/components/layout/DesktopHeader";
+import { MobileHeader } from "@/components/layout/MobileHeader";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { HeroSection } from "@/components/home/HeroSection";
+import { HomeContent } from "@/components/home/HomeContent";
 import { DebugModal } from "@/components/debug/DebugModal";
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
+    <div className="min-h-screen w-full bg-background">
       <DesktopHeader />
       <MobileHeader />
 
