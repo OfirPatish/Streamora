@@ -134,7 +134,7 @@ export function SearchResultSkeleton() {
   );
 }
 
-// Hero Section Skeleton - for hero carousel
+// Hero Section Skeleton - for hero carousel (legacy)
 export function HeroSkeleton() {
   return (
     <section className="w-full px-4 sm:px-6 py-4 sm:py-8">
@@ -155,6 +155,112 @@ export function HeroSkeleton() {
             <div className="flex gap-3">
               <UISkeleton className="h-12 w-32" />
               <UISkeleton className="h-12 w-32" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Split Screen Hero Skeleton - for desktop split-screen hero
+export function SplitScreenHeroSkeleton() {
+  return (
+    <section className="hidden sm:block w-full -mt-16">
+      <div className="relative w-full h-screen overflow-hidden bg-muted">
+        {/* Left Panel Skeleton */}
+        <div className="absolute inset-0 h-full overflow-hidden" style={{ width: "50%", left: "0%" }}>
+          <UISkeleton className="w-full h-full animate-pulse" />
+
+          {/* Content Overlay Skeleton */}
+          <div className="absolute inset-0 flex items-end">
+            <div className="w-full px-8 pb-16">
+              <div className="space-y-4">
+                {/* Badge Skeleton */}
+                <div className="flex items-center gap-3">
+                  <UISkeleton className="h-6 w-20" />
+                  <UISkeleton className="h-4 w-32" />
+                </div>
+
+                {/* Title Skeleton */}
+                <UISkeleton className="h-12 w-3/4" />
+
+                {/* Description Skeleton */}
+                <div className="space-y-2">
+                  <UISkeleton className="h-4 w-full" />
+                  <UISkeleton className="h-4 w-2/3" />
+                </div>
+
+                {/* Buttons Skeleton */}
+                <div className="flex gap-4">
+                  <UISkeleton className="h-12 w-32" />
+                  <UISkeleton className="h-12 w-32" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel Skeleton */}
+        <div className="absolute inset-0 h-full overflow-hidden" style={{ width: "50%", right: "0%" }}>
+          <UISkeleton className="w-full h-full animate-pulse" />
+
+          {/* Content Overlay Skeleton (full content for 50-50 split) */}
+          <div className="absolute inset-0 flex items-end">
+            <div className="w-full px-8 pb-16">
+              <div className="space-y-4">
+                {/* Badge Skeleton */}
+                <div className="flex items-center gap-3">
+                  <UISkeleton className="h-6 w-20" />
+                  <UISkeleton className="h-4 w-32" />
+                </div>
+
+                {/* Title Skeleton */}
+                <UISkeleton className="h-12 w-3/4" />
+
+                {/* Description Skeleton */}
+                <div className="space-y-2">
+                  <UISkeleton className="h-4 w-full" />
+                  <UISkeleton className="h-4 w-2/3" />
+                </div>
+
+                {/* Buttons Skeleton */}
+                <div className="flex gap-4">
+                  <UISkeleton className="h-12 w-32" />
+                  <UISkeleton className="h-12 w-32" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Mobile Hero Card Skeleton - for mobile hero card
+export function MobileHeroCardSkeleton() {
+  return (
+    <section className="sm:hidden w-full py-4">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="relative w-full h-48 rounded-lg overflow-hidden bg-muted">
+          <UISkeleton className="w-full h-full animate-pulse" />
+
+          {/* Content Overlay Skeleton */}
+          <div className="absolute inset-0 flex flex-col justify-end p-4">
+            {/* Badge Skeleton */}
+            <div className="flex items-center gap-2 mb-2">
+              <UISkeleton className="h-4 w-8" />
+              <UISkeleton className="h-3 w-16" />
+            </div>
+
+            {/* Title Skeleton */}
+            <UISkeleton className="h-6 w-3/4 mb-2" />
+
+            {/* Buttons Skeleton */}
+            <div className="flex gap-3">
+              <UISkeleton className="h-8 w-20" />
+              <UISkeleton className="h-8 w-8" />
             </div>
           </div>
         </div>

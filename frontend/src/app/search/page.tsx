@@ -24,25 +24,27 @@ export default function SearchPage() {
   }, [initialQuery, query, setQuery]);
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full bg-background">
       <DesktopHeader />
       <MobileHeader />
 
-      <main className="pb-20 lg:pb-0 px-6 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Page Header */}
-          <div className="space-y-2">
-            <Typography variant="h2" className="text-foreground">
-              Search Results
-            </Typography>
-            {query && <Typography variant="muted">Showing results for "{query}"</Typography>}
+      <main className="pb-20 lg:pb-0 py-8">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Page Header */}
+            <div className="space-y-2">
+              <Typography variant="h2" className="text-foreground">
+                Search Results
+              </Typography>
+              {query && <Typography variant="muted">Showing results for "{query}"</Typography>}
+            </div>
+
+            {/* Search Filters */}
+            <SearchFilters filters={filters} onFiltersChange={setFilters} resultsCount={results.length} />
+
+            {/* Search Results */}
+            <SearchResults results={results} isLoading={isLoading} query={query} />
           </div>
-
-          {/* Search Filters */}
-          <SearchFilters filters={filters} onFiltersChange={setFilters} resultsCount={results.length} />
-
-          {/* Search Results */}
-          <SearchResults results={results} isLoading={isLoading} query={query} />
         </div>
       </main>
 

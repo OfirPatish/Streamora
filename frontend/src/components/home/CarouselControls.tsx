@@ -32,15 +32,6 @@ export function CarouselControls({
           />
         ))}
       </div>
-
-      {/* Auto-play Toggle */}
-      <button
-        onClick={onAutoPlayToggle}
-        className="absolute top-6 right-6 z-30 p-2 bg-background/50 rounded-full text-foreground hover:bg-background/70 transition-colors"
-        aria-label={isAutoPlaying ? "Pause auto-play" : "Resume auto-play"}
-      >
-        {isAutoPlaying ? "⏸️" : "▶️"}
-      </button>
     </>
   );
 }

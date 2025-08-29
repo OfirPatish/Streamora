@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePopularMovies, useTopRatedMovies, usePopularSeries, useTopRatedSeries } from "@/hooks/global/useGlobalData";
+import { usePopularMovies, usePopularSeries } from "@/hooks/global/useGlobalData";
 import { Movie } from "@/hooks/api/useMovies";
 import { Series } from "@/hooks/api/useSeries";
 import { FeaturedContent } from "@/types/content";
@@ -26,9 +26,9 @@ function transformMovieToFeatured(movie: Movie): FeaturedContent {
     title: movie.title,
     description,
     year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : "TBA",
-    genre: movie.genres?.map((g) => g.name) || ["Movie"],
+    genre: ["Movie"], // Basic type doesn't have genres, use default
     rating: movie.vote_average || 0,
-    runtime: movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : "Runtime TBA",
+    runtime: "Runtime TBA", // Basic type doesn't have runtime
     type: "movie",
     isNew: new Date(movie.release_date).getFullYear() === new Date().getFullYear(),
     isTrending: movie.vote_average >= 8.0,
@@ -46,11 +46,9 @@ function transformSeriesToFeatured(series: Series): FeaturedContent {
     title: series.name,
     description,
     year: series.first_air_date ? new Date(series.first_air_date).getFullYear().toString() : "TBA",
-    genre: series.genres?.map((g) => g.name) || ["Series"],
+    genre: ["Series"], // Basic type doesn't have genres, use default
     rating: series.vote_average || 0,
-    runtime: series.number_of_seasons
-      ? `${series.number_of_seasons} Season${series.number_of_seasons !== 1 ? "s" : ""}`
-      : "Seasons TBA",
+    runtime: "Seasons TBA", // Basic type doesn't have number_of_seasons
     type: "series",
     isNew: new Date(series.first_air_date).getFullYear() === new Date().getFullYear(),
     isTrending: series.vote_average >= 8.0,
@@ -61,19 +59,19 @@ function transformSeriesToFeatured(series: Series): FeaturedContent {
 
 export function useFeaturedContent() {
   const [featuredContent, setFeaturedContent] = useState<FeaturedContent[]>([]);
+  const [topMovie, setTopMovie] = useState<FeaturedContent | null>(null);
+  const [topSeries, setTopSeries] = useState<FeaturedContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch data from multiple endpoints
+  // Fetch data from popular endpoints (Popular on Streamora)
   const { data: popularMovies, loading: loadingPopularMovies, error: errorPopularMovies } = usePopularMovies();
-  const { data: topRatedMovies, loading: loadingTopRatedMovies, error: errorTopRatedMovies } = useTopRatedMovies();
   const { data: popularSeries, loading: loadingPopularSeries, error: errorPopularSeries } = usePopularSeries();
-  const { data: topRatedSeries, loading: loadingTopRatedSeries, error: errorTopRatedSeries } = useTopRatedSeries();
 
   useEffect(() => {
     // Wait for all data to load
-    const allLoading = loadingPopularMovies || loadingTopRatedMovies || loadingPopularSeries || loadingTopRatedSeries;
-    const anyError = errorPopularMovies || errorTopRatedMovies || errorPopularSeries || errorTopRatedSeries;
+    const allLoading = loadingPopularMovies || loadingPopularSeries;
+    const anyError = errorPopularMovies || errorPopularSeries;
 
     if (allLoading) {
       setLoading(true);
@@ -87,41 +85,32 @@ export function useFeaturedContent() {
     }
 
     try {
+      // Get the most popular movie (highest popularity score)
+      if (popularMovies?.results && popularMovies.results.length > 0) {
+        const topMovieData = popularMovies.results
+          .filter((movie) => movie.backdrop_path) // Must have backdrop for hero
+          .sort((a, b) => (b.popularity || 0) - (a.popularity || 0)) // Sort by popularity
+          .slice(0, 1) // Take only the top 1
+          .map(transformMovieToFeatured)[0];
+        setTopMovie(topMovieData);
+      }
+
+      // Get the most popular series (highest popularity score)
+      if (popularSeries?.results && popularSeries.results.length > 0) {
+        const topSeriesData = popularSeries.results
+          .filter((series) => series.backdrop_path) // Must have backdrop for hero
+          .sort((a, b) => (b.popularity || 0) - (a.popularity || 0)) // Sort by popularity
+          .slice(0, 1) // Take only the top 1
+          .map(transformSeriesToFeatured)[0];
+        setTopSeries(topSeriesData);
+      }
+
+      // Keep the original featuredContent for backward compatibility (carousel controls)
       const featured: FeaturedContent[] = [];
+      if (topMovie) featured.push(topMovie);
+      if (topSeries) featured.push(topSeries);
+      setFeaturedContent(featured);
 
-      // Get top movies (high rated and popular)
-      if (topRatedMovies?.results) {
-        const topMovies = topRatedMovies.results
-          .filter((movie) => movie.vote_average >= 7.5 && movie.backdrop_path) // High quality with backdrop
-          .slice(0, 3) // Take top 3
-          .map(transformMovieToFeatured);
-        featured.push(...topMovies);
-      }
-
-      // Get top series (high rated and popular)
-      if (topRatedSeries?.results) {
-        const topSeries = topRatedSeries.results
-          .filter((series) => series.vote_average >= 7.5 && series.backdrop_path) // High quality with backdrop
-          .slice(0, 2) // Take top 2
-          .map(transformSeriesToFeatured);
-        featured.push(...topSeries);
-      }
-
-      // Add some popular content if we don't have enough
-      if (featured.length < 5) {
-        if (popularMovies?.results) {
-          const additionalMovies = popularMovies.results
-            .filter((movie) => movie.backdrop_path && !featured.some((f) => f.id === movie.id && f.type === "movie"))
-            .slice(0, 5 - featured.length)
-            .map(transformMovieToFeatured);
-          featured.push(...additionalMovies);
-        }
-      }
-
-      // Shuffle the array for variety
-      const shuffled = featured.sort(() => Math.random() - 0.5);
-
-      setFeaturedContent(shuffled.slice(0, 5)); // Limit to 5 items
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to process featured content");
@@ -130,21 +119,17 @@ export function useFeaturedContent() {
     }
   }, [
     popularMovies,
-    topRatedMovies,
     popularSeries,
-    topRatedSeries,
     loadingPopularMovies,
-    loadingTopRatedMovies,
     loadingPopularSeries,
-    loadingTopRatedSeries,
     errorPopularMovies,
-    errorTopRatedMovies,
     errorPopularSeries,
-    errorTopRatedSeries,
   ]);
 
   return {
     featuredContent,
+    topMovie,
+    topSeries,
     loading,
     error,
   };

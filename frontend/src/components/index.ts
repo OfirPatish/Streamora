@@ -6,12 +6,16 @@ export { HeroContent } from "./home/HeroContent";
 export { HeroInfo } from "./home/HeroInfo";
 export { CarouselControls } from "./home/CarouselControls";
 export { HomeContent } from "./home/HomeContent";
+export { SplitScreenPanel } from "./home/SplitScreenPanel";
+export { MobileHeroCard } from "./home/MobileHeroCard";
 
 // Movie components
 export { MovieDetail } from "./movies/MovieDetail";
+export { MoviesContent } from "./movies/MoviesContent";
 
 // Series components
 export { SeriesDetail } from "./series/SeriesDetail";
+export { SeriesContent } from "./series/SeriesContent";
 
 // Search components
 export { SearchFilters } from "./search/SearchFilters";
@@ -27,11 +31,15 @@ export { MobileBottomNav } from "./layout/MobileBottomNav";
 export { MovieCard } from "./common/MovieCard";
 export { ContentCarousel } from "./common/ContentCarousel";
 export { ContentGrid } from "./common/ContentGrid";
-export { VideoModal } from "./common/VideoModal";
-export { Skeleton, MovieCardSkeleton, DetailPageSkeleton, SearchResultSkeleton, HeroSkeleton } from "./common/Skeleton";
-
-// Section components
-export { DetailBanner, DetailInfo, DetailCast, DetailProduction } from "./common/sections";
+export {
+  Skeleton,
+  MovieCardSkeleton,
+  DetailPageSkeleton,
+  SearchResultSkeleton,
+  HeroSkeleton,
+  SplitScreenHeroSkeleton,
+  MobileHeroCardSkeleton,
+} from "./common/Skeleton";
 
 // Debug components
 export { ApiTester } from "./debug/ApiTester";

@@ -22,15 +22,15 @@ export function DesktopHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="hidden lg:block sticky top-0 z-40 w-full bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="flex items-center gap-6 px-4 py-3">
+    <header className="hidden lg:block sticky top-0 z-40 w-full bg-black/20 backdrop-blur-sm shadow-lg">
+      <div className="flex items-center gap-6 py-3 px-8">
         {/* Logo - Left */}
         <div className="flex-shrink-0">
-          <h1 className="text-2xl font-bold text-foreground">Streamora</h1>
+          <h1 className="text-2xl font-bold text-white">Streamora</h1>
         </div>
 
-        {/* Navigation Menu - Center */}
-        <div className="flex-1 flex justify-end pr-8">
+        {/* Navigation Menu - Left side next to logo */}
+        <div className="flex-shrink-0">
           <NavigationMenu>
             <NavigationMenuList>
               {/* Home */}
@@ -41,10 +41,7 @@ export function DesktopHeader() {
                 >
                   <Link
                     href="/"
-                    className={cn(
-                      "text-muted-foreground hover:text-foreground transition-colors",
-                      pathname === "/" && "text-foreground"
-                    )}
+                    className={cn("text-white/80 hover:text-white transition-colors", pathname === "/" && "text-white")}
                   >
                     Home
                   </Link>
@@ -60,8 +57,8 @@ export function DesktopHeader() {
                   <Link
                     href="/movies"
                     className={cn(
-                      "text-muted-foreground hover:text-foreground transition-colors",
-                      pathname === "/movies" && "text-foreground"
+                      "text-white/80 hover:text-white transition-colors",
+                      pathname === "/movies" && "text-white"
                     )}
                   >
                     Movies
@@ -78,8 +75,8 @@ export function DesktopHeader() {
                   <Link
                     href="/series"
                     className={cn(
-                      "text-muted-foreground hover:text-foreground transition-colors",
-                      pathname === "/series" && "text-foreground"
+                      "text-white/80 hover:text-white transition-colors",
+                      pathname === "/series" && "text-white"
                     )}
                   >
                     TV Shows
@@ -96,8 +93,8 @@ export function DesktopHeader() {
                   <Link
                     href="/watchlist"
                     className={cn(
-                      "text-muted-foreground hover:text-foreground transition-colors",
-                      pathname === "/watchlist" && "text-foreground"
+                      "text-white/80 hover:text-white transition-colors",
+                      pathname === "/watchlist" && "text-white"
                     )}
                   >
                     Watchlist
@@ -108,39 +105,30 @@ export function DesktopHeader() {
           </NavigationMenu>
         </div>
 
+        {/* Spacer to push search and profile to the right */}
+        <div className="flex-1" />
+
         {/* Search Bar */}
-        <div className="flex-shrink-0 w-64">
+        <div className="flex-shrink-0 w-56">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/80" />
             <Input
               type="search"
               placeholder="Search movies, shows..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background border-border text-foreground placeholder-muted-foreground focus:border-border"
+              className="pl-10 bg-black/20 border-white/20 text-white placeholder-white/60 focus:border-white/40 backdrop-blur-sm"
             />
           </div>
         </div>
 
         {/* Action Buttons - Right */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Notifications */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative text-muted-foreground hover:text-foreground hover:bg-muted/50"
-          >
-            <Bell className="h-5 w-5" />
-            <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 bg-destructive text-xs flex items-center justify-center">
-              3
-            </Badge>
-          </Button>
-
           {/* Profile Avatar */}
           <Button
             variant="ghost"
             size="icon"
-            className="p-0 h-auto w-auto text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            className="p-0 h-auto w-auto text-white/80 hover:text-white hover:bg-white/10"
           >
             <Avatar className="h-8 w-8">
               <AvatarImage src="https://github.com/shadcn.png" alt="Profile" />

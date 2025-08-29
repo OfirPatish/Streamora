@@ -19,11 +19,11 @@ export default async function MoviePage({ params }: MoviePageProps) {
   }
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full bg-background">
       <DesktopHeader />
       <MobileHeader />
 
-      <main className="pb-20 lg:pb-0 p-6">
+      <main className="pb-20 lg:pb-0">
         <MovieDetail id={id} />
       </main>
 

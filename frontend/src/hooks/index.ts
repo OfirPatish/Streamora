@@ -14,7 +14,6 @@ export {
   useMovieDetails,
   useMovieCredits,
   useMovieVideos,
-  useMovieSearch,
 } from "./api/useMovies";
 export {
   usePopularSeries,
@@ -25,16 +24,20 @@ export {
   useSeriesCredits,
   useSeriesVideos,
   useSeasonDetails,
-  useSeriesSearch,
 } from "./api/useSeries";
 export { useSearch } from "./api/useSearch";
 export {
   useMultiSearch,
-  useMovieSearch as useApiMovieSearch,
-  useSeriesSearch as useApiSeriesSearch,
+  useMovieSearch,
+  useSeriesSearch,
   usePersonSearch,
   useDiscoverMovies,
 } from "./api/useApiSearch";
 
 // UI hooks
 export { useIsMobile } from "./ui/useMobile";
+export { useSplitScreen } from "./ui/useSplitScreen";
+export { useInfiniteScroll } from "./ui/useInfiniteScroll";
+
+// Pagination hooks
+export { usePaginatedContent } from "./api/usePaginatedContent";

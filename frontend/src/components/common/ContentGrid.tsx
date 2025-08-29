@@ -1,17 +1,19 @@
 import { MovieCard } from "./MovieCard";
-import { Skeleton } from "./Skeleton";
+import { MovieCardSkeleton } from "./Skeleton";
 import { SectionTitle, Typography } from "@/components/ui/typography";
 
 interface ContentGridProps {
-  title: string;
+  title?: string;
   items: Array<{
     id: number;
     title: string;
     year: string;
     genre: string;
     type: "movie" | "series";
-    poster_path?: string | null;
-    vote_average?: number;
+    index: number;
+    rating?: number;
+    isNew?: boolean;
+    posterPath?: string | null;
   }>;
   showViewAll?: boolean;
   loading?: boolean;
@@ -21,21 +23,23 @@ interface ContentGridProps {
 export function ContentGrid({ title, items, showViewAll = true, loading = false, error = null }: ContentGridProps) {
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-6">
-        <SectionTitle className="mb-0">{title}</SectionTitle>
-        {showViewAll && !loading && !error && (
-          <Typography variant="link" as="button" className="hover:text-primary transition-colors">
-            View All
-          </Typography>
-        )}
-      </div>
+      {title && (
+        <div className="flex items-center justify-between mb-6">
+          <SectionTitle className="mb-0">{title}</SectionTitle>
+          {showViewAll && !loading && !error && (
+            <Typography variant="link" as="button" className="hover:text-primary transition-colors">
+              View All
+            </Typography>
+          )}
+        </div>
+      )}
 
       {/* Error State */}
       {error && (
         <div className="content-grid">
           <div className="col-span-full flex items-center justify-center py-8">
             <Typography variant="muted" className="text-destructive">
-              Failed to load {title.toLowerCase()}: {error}
+              Failed to load {title?.toLowerCase() || "content"}: {error}
             </Typography>
           </div>
         </div>
@@ -44,8 +48,8 @@ export function ContentGrid({ title, items, showViewAll = true, loading = false,
       {/* Loading State */}
       {loading && (
         <div className="content-grid">
-          {Array.from({ length: 6 }, (_, index) => (
-            <Skeleton key={index} />
+          {Array.from({ length: 20 }, (_, index) => (
+            <MovieCardSkeleton key={index} />
           ))}
         </div>
       )}
@@ -61,9 +65,11 @@ export function ContentGrid({ title, items, showViewAll = true, loading = false,
               year={item.year}
               genre={item.genre}
               type={item.type}
-              index={index}
-              posterPath={item.poster_path}
-              rating={item.vote_average}
+              index={item.index}
+              rating={item.rating}
+              isNew={item.isNew}
+              posterPath={item.posterPath}
+              priority={index < 6} // Prioritize first 6 visible cards for LCP
             />
           ))}
         </div>

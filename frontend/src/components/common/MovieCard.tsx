@@ -1,6 +1,5 @@
 import { Film, Tv } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { CardTitle } from "@/components/ui/typography";
 import { getTMDBImageUrl } from "@/lib/api";
 import Link from "next/link";
 import Image from "next/image";
@@ -36,13 +35,12 @@ export function MovieCard({
 
   return (
     <div className="w-full group">
-      <Link href={href} className="block">
-        {/* Card - No Border */}
+      <Link href={href} className="block" suppressHydrationWarning>
         <Card className="cursor-pointer transition-all duration-300 w-full relative overflow-hidden bg-transparent border-transparent p-0">
           <CardContent className="p-0 w-full relative">
             {/* Poster/Thumbnail - Border on Hover */}
             <div className="poster-aspect flex items-center justify-center w-full bg-muted transition-all duration-300 relative overflow-hidden rounded-lg border border-transparent hover:border-border">
-              {posterUrl ? (
+              {posterPath && posterUrl ? (
                 <Image
                   src={posterUrl}
                   alt={title}
@@ -58,9 +56,9 @@ export function MovieCard({
 
             {/* Title - Centered */}
             <div className="mt-2">
-              <CardTitle className="text-sm font-semibold text-center line-clamp-2 leading-tight px-1">
+              <h3 className="text-sm font-semibold text-center line-clamp-2 leading-tight px-1 text-foreground">
                 {title}
-              </CardTitle>
+              </h3>
             </div>
           </CardContent>
         </Card>

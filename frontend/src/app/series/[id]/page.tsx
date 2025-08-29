@@ -18,11 +18,11 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     throw new Error("Failed to resolve series ID");
   }
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full bg-background">
       <DesktopHeader />
       <MobileHeader />
 
-      <main className="pb-20 lg:pb-0 p-6">
+      <main className="pb-20 lg:pb-0">
         <SeriesDetail id={id} />
       </main>
 
