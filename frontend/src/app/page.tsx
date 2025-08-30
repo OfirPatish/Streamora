@@ -1,22 +1,17 @@
-import { DesktopHeader } from "@/components/layout/DesktopHeader";
-import { MobileHeader } from "@/components/layout/MobileHeader";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { HeroSection } from "@/components/home/HeroSection";
-import { HomeContent } from "@/components/home/HomeContent";
-import { DebugModal } from "@/components/debug/DebugModal";
+import { PageTemplate } from "@/components/layout/PageTemplate";
+import { NetflixHero } from "@/components/sections/home";
+import { HomeContent } from "@/components/sections/home";
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full bg-background">
-      <DesktopHeader />
-      <MobileHeader />
+    <PageTemplate>
+      {/* Netflix-style Hero Section */}
+      <NetflixHero />
 
-      <main className="pb-20 lg:pb-0">
-        <HeroSection />
+      {/* Content Sections */}
+      <div className="bg-background">
         <HomeContent />
-      </main>
-      <MobileBottomNav />
-      <DebugModal />
-    </div>
+      </div>
+    </PageTemplate>
   );
 }

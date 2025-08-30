@@ -1,12 +1,11 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { DesktopHeader } from "@/components/layout/DesktopHeader";
-import { MobileHeader } from "@/components/layout/MobileHeader";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { SearchResults } from "@/components/search/SearchResults";
-import { SearchFilters } from "@/components/search/SearchFilters";
+import { useEffect } from "react";
+import { PageTemplate } from "@/components/layout/PageTemplate";
+import { ContentSection } from "@/components/layout/PageContentWrapper";
+import { SearchResults } from "@/components/sections/search";
+import { SearchFilters } from "@/components/sections/search";
 import { useSearch } from "@/hooks/api/useSearch";
 import { Typography } from "@/components/ui/typography";
 
@@ -24,32 +23,21 @@ export default function SearchPage() {
   }, [initialQuery, query, setQuery]);
 
   return (
-    <div className="min-h-screen w-full bg-background">
-      <DesktopHeader />
-      <MobileHeader />
+    <PageTemplate>
+      <ContentSection
+        title="🔍 Search Results"
+        subtitle={query ? `Showing results for "${query}"` : "Search for movies and TV shows"}
+        loading={isLoading}
+        error={null}
+      >
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Search Filters */}
+          <SearchFilters filters={filters} onFiltersChange={setFilters} resultsCount={results.length} />
 
-      <main className="pb-20 lg:pb-0 py-8">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto space-y-6">
-            {/* Page Header */}
-            <div className="space-y-2">
-              <Typography variant="h2" className="text-foreground">
-                Search Results
-              </Typography>
-              {query && <Typography variant="muted">Showing results for "{query}"</Typography>}
-            </div>
-
-            {/* Search Filters */}
-            <SearchFilters filters={filters} onFiltersChange={setFilters} resultsCount={results.length} />
-
-            {/* Search Results */}
-            <SearchResults results={results} isLoading={isLoading} query={query} />
-          </div>
+          {/* Search Results */}
+          <SearchResults results={results} isLoading={isLoading} query={query} />
         </div>
-      </main>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
-    </div>
+      </ContentSection>
+    </PageTemplate>
   );
 }

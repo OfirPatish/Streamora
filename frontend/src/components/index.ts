@@ -1,51 +1,37 @@
 // Main components index - export all components
 
-// Home components
-export { HeroSection } from "./home/HeroSection";
-export { HeroContent } from "./home/HeroContent";
-export { HeroInfo } from "./home/HeroInfo";
-export { CarouselControls } from "./home/CarouselControls";
-export { HomeContent } from "./home/HomeContent";
-export { SplitScreenPanel } from "./home/SplitScreenPanel";
-export { MobileHeroCard } from "./home/MobileHeroCard";
+// Section components
+export { HomeContent } from "./sections/home";
+export {
+  MovieDetail,
+  SeriesDetail,
+  MoviesContent,
+  SeriesContent,
+  DetailBanner,
+  DetailCast,
+  DetailInfo,
+  DetailProduction,
+} from "./sections/shared";
+export { SearchResults, SearchSuggestions } from "./sections/search";
 
-// Movie components
-export { MovieDetail } from "./movies/MovieDetail";
-export { MoviesContent } from "./movies/MoviesContent";
+// Form components
+export { SearchFilters } from "./sections/search";
 
-// Series components
-export { SeriesDetail } from "./series/SeriesDetail";
-export { SeriesContent } from "./series/SeriesContent";
-
-// Search components
-export { SearchFilters } from "./search/SearchFilters";
-export { SearchResults } from "./search/SearchResults";
-export { SearchSuggestions } from "./search/SearchSuggestions";
+// Modal components
+export { VideoModal } from "./sections/shared";
 
 // Layout components
 export { DesktopHeader } from "./layout/DesktopHeader";
 export { MobileHeader } from "./layout/MobileHeader";
 export { MobileBottomNav } from "./layout/MobileBottomNav";
+export { PageTemplate } from "./layout/PageTemplate";
+export { ContentSection } from "./layout/PageContentWrapper";
 
-// Common components
-export { MovieCard } from "./common/MovieCard";
-export { ContentCarousel } from "./common/ContentCarousel";
-export { ContentGrid } from "./common/ContentGrid";
-export {
-  Skeleton,
-  MovieCardSkeleton,
-  DetailPageSkeleton,
-  SearchResultSkeleton,
-  HeroSkeleton,
-  SplitScreenHeroSkeleton,
-  MobileHeroCardSkeleton,
-} from "./common/Skeleton";
+// Card components
+export { ContentCard, ContentGrid, ContentCarousel } from "./sections/shared";
 
-// Debug components
-export { ApiTester } from "./debug/ApiTester";
-export { CacheDebug } from "./debug/CacheDebug";
-export { DebugModal } from "./debug/DebugModal";
-export { DataDebugger } from "./debug/DataDebugger";
+// UI components
+export { Skeleton, ContentCardSkeleton, DetailPageSkeleton, SearchResultSkeleton } from "./ui/skeletons/Skeleton";
 
 // Provider components
-export { GlobalDataProvider } from "./providers/GlobalDataProvider";
+export { QueryProvider } from "./providers/QueryProvider";

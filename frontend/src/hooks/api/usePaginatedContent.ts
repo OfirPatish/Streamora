@@ -1,219 +1,81 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useApi } from "./useApi";
-import { Movie } from "./useMovies";
-import { Series } from "./useSeries";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { Movie, Series } from "@/types/api";
 import { PaginatedResponse } from "@/lib/api";
-import { frontendCache, CACHE_TTL } from "@/lib/cache";
 
 interface UsePaginatedContentProps {
-  endpoint: string; // e.g., "/movies/popular", "/series/top-rated"
+  endpoint: string;
   enabled?: boolean;
+  pageSize?: number;
 }
 
-export function usePaginatedContent<T = Movie | Series>({ endpoint, enabled = true }: UsePaginatedContentProps) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [allItems, setAllItems] = useState<T[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [showLoadingSkeleton, setShowLoadingSkeleton] = useState(false);
-  const [currentEndpoint, setCurrentEndpoint] = useState(endpoint);
+export function usePaginatedContent<T = Movie | Series>({
+  endpoint,
+  enabled = true,
+  pageSize = 20,
+}: UsePaginatedContentProps) {
+  const queryClient = useQueryClient();
 
-  // Get appropriate TTL based on endpoint
-  const getCacheTTL = useCallback((endpoint: string): number => {
-    if (endpoint.includes("/popular")) return CACHE_TTL.POPULAR;
-    if (endpoint.includes("/top-rated")) return CACHE_TTL.TOP_RATED;
-    if (endpoint.includes("/now-playing")) return CACHE_TTL.NOW_PLAYING;
-    if (endpoint.includes("/upcoming")) return CACHE_TTL.UPCOMING;
-    if (endpoint.includes("/airing-today") || endpoint.includes("/on-the-air")) return CACHE_TTL.NOW_PLAYING;
-    return CACHE_TTL.POPULAR; // Default
-  }, []);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error, refetch } = useInfiniteQuery(
+    {
+      queryKey: ["paginated-content", endpoint],
+      queryFn: async ({ pageParam = 1 }) => {
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}${endpoint}?page=${pageParam}`;
+        const response = await fetch(apiUrl);
+        const result = await response.json();
 
-  // Reset state when endpoint changes (filter change)
-  useEffect(() => {
-    if (currentEndpoint !== endpoint) {
-      // Immediately reset state
-      setCurrentPage(1);
-      setAllItems([]);
-      setHasMore(true);
-      setLoadingMore(false);
-      setShowLoadingSkeleton(false);
-      setCurrentEndpoint(endpoint);
-
-      // Clear pagination state for old endpoint in cache
-      frontendCache.delete(`pagination-state`, { endpoint: currentEndpoint });
-    }
-  }, [endpoint, currentEndpoint]);
-
-  // Load persisted pagination state for this endpoint from cache
-  useEffect(() => {
-    if (enabled) {
-      const paginationState = frontendCache.get<{
-        page: number;
-        hasMoreCached: boolean;
-        totalItems: number;
-      }>("pagination-state", { endpoint });
-
-      if (paginationState) {
-        // Only restore if it's reasonable (not too many pages)
-        if (paginationState.page <= 5) {
-          setCurrentPage(paginationState.page);
-          setHasMore(paginationState.hasMoreCached);
+        if (!result.success) {
+          throw new Error(result.error?.message || "Failed to fetch data");
         }
-      }
-    }
-  }, [endpoint, enabled]);
 
-  // Save pagination state to cache
-  const savePaginationState = useCallback(() => {
-    frontendCache.set(
-      "pagination-state",
-      {
-        page: currentPage,
-        hasMoreCached: hasMore,
-        totalItems: allItems.length,
+        return result.data as PaginatedResponse<T>;
       },
-      300, // 5 minutes TTL for pagination state
-      { endpoint }
-    );
-  }, [endpoint, currentPage, hasMore, allItems.length]);
-
-  // Fetch current page
-  const { data, loading, error, refetch } = useApi<PaginatedResponse<T>>(
-    `${endpoint}?page=${currentPage}`,
-    undefined,
-    enabled && currentPage === 1 && currentEndpoint === endpoint // Only auto-fetch first page and when endpoint matches
+      getNextPageParam: (lastPage: PaginatedResponse<T>, allPages) => {
+        const nextPage = allPages.length + 1;
+        return nextPage <= (lastPage.total_pages || 0) ? nextPage : undefined;
+      },
+      initialPageParam: 1,
+      enabled,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes
+    }
   );
 
-  // Update items when new data arrives
-  useEffect(() => {
-    if (data?.results) {
-      setAllItems((prev) => {
-        if (currentPage === 1) {
-          // First page - replace all data
-          return data.results;
-        } else {
-          // Additional pages - append new data, avoiding duplicates
-          const existingIds = new Set(prev.map((item: any) => item.id));
-          const newItems = data.results.filter((item: any) => !existingIds.has(item.id));
-          return [...prev, ...newItems];
-        }
-      });
+  // Flatten all pages into a single array
+  const allItems = data?.pages.flatMap((page) => page.results || []) ?? [];
 
-      // Check if there are more pages
-      const newHasMore = currentPage < (data.total_pages || 0);
-      setHasMore(newHasMore);
-      setLoadingMore(false);
+  // Remove duplicates based on ID
+  const uniqueItems = allItems.filter(
+    (item, index, self) => index === self.findIndex((t) => (t as any).id === (item as any).id)
+  );
 
-      // Save pagination state for this session
-      savePaginationState();
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
-  }, [data, currentPage, savePaginationState, endpoint]); // Added endpoint dependency
+  };
 
-  // Force refetch when endpoint changes to ensure immediate data loading
-  useEffect(() => {
-    if (enabled && currentPage === 1 && currentEndpoint === endpoint) {
-      refetch();
-    }
-  }, [endpoint, enabled, currentPage, currentEndpoint, refetch]);
+  const reset = () => {
+    queryClient.removeQueries({ queryKey: ["paginated-content", endpoint] });
+  };
 
-  // Load next page
-  const loadMore = useCallback(async () => {
-    if (!loadingMore && hasMore && !loading && enabled) {
-      setLoadingMore(true);
-
-      // Show skeleton after a delay to avoid flickering on fast connections
-      const skeletonTimer = setTimeout(() => {
-        setShowLoadingSkeleton(true);
-      }, 300);
-
-      const nextPage = currentPage + 1;
-
-      try {
-        // First check if we have cached data for this page
-        const cachedPageData = frontendCache.get<PaginatedResponse<T>>(`${endpoint}?page=${nextPage}`);
-
-        if (cachedPageData) {
-          // Use cached data
-          setAllItems((prev) => {
-            const existingIds = new Set(prev.map((item: any) => item.id));
-            const newItems = cachedPageData.results.filter((item: any) => !existingIds.has(item.id));
-
-            if (newItems.length === 0) return prev;
-            return [...prev, ...newItems];
-          });
-
-          setCurrentPage(nextPage);
-          const newHasMore = nextPage < (cachedPageData.total_pages || 0);
-          setHasMore(newHasMore);
-          savePaginationState();
-        } else {
-          // Fetch from API
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}${endpoint}?page=${nextPage}`
-          );
-          const result = await response.json();
-
-          if (result.success && result.data?.results) {
-            const pageData = result.data;
-
-            // Cache the page data
-            frontendCache.set(`${endpoint}?page=${nextPage}`, pageData, getCacheTTL(endpoint));
-
-            setAllItems((prev) => {
-              const existingIds = new Set(prev.map((item: any) => item.id));
-              const newItems = pageData.results.filter((item: any) => !existingIds.has(item.id));
-
-              if (newItems.length === 0) return prev;
-              return [...prev, ...newItems];
-            });
-
-            setCurrentPage(nextPage);
-            const newHasMore = nextPage < (pageData.total_pages || 0);
-            setHasMore(newHasMore);
-            savePaginationState();
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load more content:", err);
-      } finally {
-        clearTimeout(skeletonTimer);
-        setShowLoadingSkeleton(false);
-        setLoadingMore(false);
-      }
-    }
-  }, [endpoint, currentPage, loadingMore, hasMore, loading, enabled, getCacheTTL, savePaginationState]);
-
-  // Reset function
-  const reset = useCallback(() => {
-    setCurrentPage(1);
-    setAllItems([]);
-    setHasMore(true);
-    setLoadingMore(false);
-
-    // Clear pagination cache for this endpoint
-    frontendCache.delete("pagination-state", { endpoint });
-  }, [endpoint]);
-
-  // Refresh function
-  const refresh = useCallback(() => {
-    reset();
+  const refresh = () => {
     refetch();
-  }, [reset, refetch]);
+  };
 
   return {
-    items: allItems,
-    loading: loading && currentPage === 1, // Only show loading for first page
-    loadingMore,
-    showLoadingSkeleton,
-    error,
-    hasMore,
+    items: uniqueItems,
+    loading: isLoading,
+    loadingMore: isFetchingNextPage,
+    showLoadingSkeleton: isFetchingNextPage,
+    error: isError ? (error as Error)?.message || "An error occurred" : null,
+    hasMore: hasNextPage ?? false,
     loadMore,
     reset,
     refresh,
-    currentPage,
-    totalPages: data?.total_pages || 0,
-    totalResults: data?.total_results || 0,
+    currentPage: data?.pages.length || 0,
+    totalPages: data?.pages[0]?.total_pages || 0,
+    totalResults: data?.pages[0]?.total_results || 0,
   };
 }

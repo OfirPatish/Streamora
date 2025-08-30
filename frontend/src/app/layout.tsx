@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { GlobalDataProvider } from "@/components/providers/GlobalDataProvider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
         suppressHydrationWarning
       >
-        <GlobalDataProvider>{children}</GlobalDataProvider>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

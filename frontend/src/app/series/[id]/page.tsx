@@ -1,7 +1,4 @@
-import { DesktopHeader } from "@/components/layout/DesktopHeader";
-import { MobileHeader } from "@/components/layout/MobileHeader";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { SeriesDetail } from "@/components/series/SeriesDetail";
+import { SeriesDetail } from "@/components/sections/shared";
 
 interface SeriesPageProps {
   params: Promise<{
@@ -17,17 +14,6 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   } catch (error) {
     throw new Error("Failed to resolve series ID");
   }
-  return (
-    <div className="min-h-screen w-full bg-background">
-      <DesktopHeader />
-      <MobileHeader />
 
-      <main className="pb-20 lg:pb-0">
-        <SeriesDetail id={id} />
-      </main>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
-    </div>
-  );
+  return <SeriesDetail id={id} />;
 }

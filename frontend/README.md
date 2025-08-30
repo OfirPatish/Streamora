@@ -6,18 +6,18 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1+-38B2AC.svg)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A modern, responsive Next.js frontend for Streamora featuring a sophisticated global data system, Shadcn/ui components, and optimized performance with 50% fewer API calls.
+A modern, responsive Next.js frontend for Streamora featuring TanStack Query for data management, Shadcn/ui components, and optimized performance with intelligent caching and real-time updates.
 
 ## ✨ Features
 
-| Category                 | Features                                  |
-| ------------------------ | ----------------------------------------- |
-| 🎬 **Content Discovery** | Movies, series, trending, recommendations |
-| 🔍 **Smart Search**      | Multi-search with filters and suggestions |
-| 📱 **Responsive Design** | Mobile-first, adaptive layouts            |
-| ⚡ **Performance**       | Global data system, caching, optimization |
-| 🎨 **Modern UI**         | Shadcn/ui components, dark theme          |
-| 🔄 **Real-time Updates** | Live data synchronization                 |
+| Category                 | Features                                          |
+| ------------------------ | ------------------------------------------------- |
+| 🎬 **Content Discovery** | Movies, series, trending, recommendations         |
+| 🔍 **Smart Search**      | Multi-search with filters and suggestions         |
+| 📱 **Responsive Design** | Mobile-first, adaptive layouts                    |
+| ⚡ **Performance**       | TanStack Query, intelligent caching, optimization |
+| 🎨 **Modern UI**         | Shadcn/ui components, dark theme                  |
+| 🔄 **Real-time Updates** | Live data synchronization                         |
 
 ## 🚀 Quick Start
 
@@ -45,14 +45,15 @@ npm run dev
 
 ### Tech Stack
 
-| Technology       | Purpose                         | Version |
-| ---------------- | ------------------------------- | ------- |
-| **Next.js**      | React framework with App Router | 15.5.2  |
-| **React**        | UI library                      | 19.1.0  |
-| **TypeScript**   | Type safety                     | 5.2+    |
-| **Tailwind CSS** | Utility-first styling           | 4.1+    |
-| **Shadcn/ui**    | Component library               | Latest  |
-| **Lucide React** | Icon library                    | 0.542+  |
+| Technology         | Purpose                         | Version |
+| ------------------ | ------------------------------- | ------- |
+| **Next.js**        | React framework with App Router | 15.5.2  |
+| **React**          | UI library                      | 19.1.0  |
+| **TypeScript**     | Type safety                     | 5.2+    |
+| **Tailwind CSS**   | Utility-first styling           | 4.1+    |
+| **Shadcn/ui**      | Component library               | Latest  |
+| **Lucide React**   | Icon library                    | 0.542+  |
+| **TanStack Query** | Data fetching & caching         | 5.85+   |
 
 ### Project Structure
 
@@ -79,46 +80,83 @@ src/
 │   ├── 📁 debug/             # Development tools
 │   └── 📁 ui/                # Shadcn/ui components
 ├── 📁 hooks/                 # Custom React hooks
+│   ├── 📁 api/              # TanStack Query hooks
+│   └── 📁 ui/               # UI utility hooks
 ├── 📁 lib/                   # Utilities and configurations
 └── 📁 types/                 # TypeScript type definitions
 ```
 
-## 🌐 Global Data System
+## ⚡ TanStack Query Data Management
 
 ### Overview
 
-The frontend uses a sophisticated **Global Data System** that eliminates API call duplication:
+The frontend uses **TanStack Query** for intelligent data fetching and caching:
 
-- **8 API calls** made once and shared across all components
-- **50% fewer network requests** compared to individual calls
-- **Smart caching** with localStorage and TTL
-- **Real-time synchronization** across components
+- **Automatic caching** with smart invalidation
+- **Background updates** for fresh data
+- **Optimistic updates** for better UX
+- **Built-in error handling** and retry logic
+- **DevTools integration** for debugging
 
-### API Endpoints Cached
+### Available Hooks
 
-| Endpoint                   | Purpose             | Cache TTL  |
-| -------------------------- | ------------------- | ---------- |
-| `/api/movies/popular`      | Popular movies      | 2 hours    |
-| `/api/movies/top-rated`    | Top rated movies    | 6 hours    |
-| `/api/movies/now-playing`  | Now playing movies  | 1 hour     |
-| `/api/movies/upcoming`     | Upcoming movies     | 4 hours    |
-| `/api/series/popular`      | Popular series      | 2 hours    |
-| `/api/series/top-rated`    | Top rated series    | 6 hours    |
-| `/api/series/on-the-air`   | On the air series   | 2 hours    |
-| `/api/series/airing-today` | Airing today series | 30 minutes |
+| Hook                  | Purpose                    | Usage                  |
+| --------------------- | -------------------------- | ---------------------- |
+| `usePaginatedContent` | Infinite scroll pagination | Movies/Series lists    |
+| `useSearch`           | Search with debouncing     | Search functionality   |
+| `useHomeData`         | Home page content          | Featured sections      |
+| `useFeaturedContent`  | Hero section data          | Featured movies/series |
+| `useMovieDetails`     | Movie details              | Movie detail pages     |
+| `useSeriesDetails`    | Series details             | Series detail pages    |
 
-### Usage Example
+### Usage Examples
+
+#### Basic Query Hook
 
 ```typescript
-// Access global data in any component
-import { usePopularMovies, useTopRatedSeries } from "@/hooks/useGlobalData";
+import { useNowPlayingMovies } from "@/hooks/api/useHomeQueries";
 
 function MyComponent() {
-  const { data: movies, loading, error } = usePopularMovies();
-  const { data: series } = useTopRatedSeries();
+  const { data, isLoading, error } = useNowPlayingMovies();
 
-  // Data is automatically shared and cached
-  return <div>{/* Your component */}</div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return <div>{/* Render data */}</div>;
+}
+```
+
+#### Infinite Scroll Pagination
+
+```typescript
+import { usePaginatedContent } from "@/hooks/api/usePaginatedContent";
+
+function MoviesList() {
+  const { items, loading, hasMore, loadMore } = usePaginatedContent({
+    endpoint: "/movies/popular",
+    enabled: true,
+  });
+
+  return (
+    <div>
+      {items.map((movie) => (
+        <MovieCard key={movie.id} movie={movie} />
+      ))}
+      {hasMore && <button onClick={loadMore}>Load More</button>}
+    </div>
+  );
+}
+```
+
+#### Search with Debouncing
+
+```typescript
+import { useSearch } from "@/hooks/api/useSearch";
+
+function SearchComponent() {
+  const { query, setQuery, results, isLoading } = useSearch();
+
+  return <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search movies and series..." />;
 }
 ```
 
@@ -198,7 +236,19 @@ function MyComponent() {
 | `npm run dev`   | Start development server |
 | `npm run build` | Build for production     |
 | `npm start`     | Start production server  |
-| `npm run lint`  | Run ESLint               |
+
+### TanStack Query DevTools
+
+The app includes **TanStack Query DevTools** for development:
+
+- **Real-time query monitoring** - See all active queries
+- **Cache inspection** - View cached data and timestamps
+- **Network monitoring** - Track API calls and responses
+- **Query invalidation** - Manually invalidate queries
+- **Performance insights** - Monitor query performance
+
+**Access DevTools**: Open browser DevTools and look for the "TanStack Query" tab, or press the floating button in development mode.
+| `npm run lint` | Run ESLint |
 
 ### Development Tools
 

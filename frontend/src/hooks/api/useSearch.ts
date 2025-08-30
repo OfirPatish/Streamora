@@ -1,87 +1,99 @@
-import { useState, useEffect, useCallback } from "react";
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { SearchResult, SearchFilters } from "@/types/search";
-import { useMultiSearch, MultiSearchResult } from "./useApiSearch";
+// Define the MultiSearchResult type locally since we removed useApiSearch
+export interface MultiSearchResult {
+  id: number;
+  media_type: "movie" | "tv" | "person";
+  title?: string; // For movies
+  name?: string; // For TV shows and people
+  overview?: string;
+  release_date?: string; // For movies
+  first_air_date?: string; // For TV shows
+  poster_path?: string | null;
+  profile_path?: string | null; // For people
+  vote_average?: number;
+  known_for_department?: string; // For people
+}
+
+// Transform TMDB MultiSearchResult to our SearchResult format (movies and series only)
+function transformSearchResults(apiResults: MultiSearchResult[]): SearchResult[] {
+  return apiResults
+    .filter((result) => result.media_type === "movie" || result.media_type === "tv") // Only movies and series
+    .map((result) => ({
+      id: result.id,
+      title: result.title || result.name || "",
+      type: result.media_type === "tv" ? "series" : "movie",
+      year:
+        result.media_type === "movie"
+          ? result.release_date
+            ? new Date(result.release_date).getFullYear().toString()
+            : ""
+          : result.first_air_date
+          ? new Date(result.first_air_date).getFullYear().toString()
+          : "",
+      overview: result.overview || "",
+      rating: result.vote_average || undefined,
+      poster_path: result.poster_path || undefined,
+    }));
+}
+
+// Search API function
+async function searchAPI(query: string, page: number = 1) {
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}/search/multi?query=${encodeURIComponent(query)}&page=${page}`;
+  const response = await fetch(apiUrl);
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.error?.message || "Failed to fetch search results");
+  }
+
+  return result.data;
+}
 
 export function useSearch() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>({ type: "all" });
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  // Real API search hook
-  const { search: multiSearch, loading: apiLoading, error: apiError } = useMultiSearch();
-
-  // Transform TMDB MultiSearchResult to our SearchResult format (movies and series only)
-  const transformSearchResults = useCallback((apiResults: MultiSearchResult[]): SearchResult[] => {
-    return apiResults
-      .filter((result) => result.media_type === "movie" || result.media_type === "tv") // Only movies and series
-      .map((result) => ({
-        id: result.id,
-        title: result.title || result.name || "",
-        type: result.media_type === "tv" ? "series" : "movie",
-        year:
-          result.media_type === "movie"
-            ? result.release_date
-              ? new Date(result.release_date).getFullYear().toString()
-              : ""
-            : result.first_air_date
-            ? new Date(result.first_air_date).getFullYear().toString()
-            : "",
-        overview: result.overview || "",
-        rating: result.vote_average || undefined,
-        poster_path: result.poster_path || undefined,
-      }));
-  }, []);
-
-  // Debounced search
+  // Debounced query for search
   const [debouncedQuery, setDebouncedQuery] = useState("");
-
+  
+  // Update debounced query when query changes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 300);
+    if (query !== debouncedQuery) {
+      const timer = setTimeout(() => {
+        setDebouncedQuery(query);
+      }, 300);
 
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  // Fetch search results
-  useEffect(() => {
-    if (debouncedQuery.trim()) {
-      performSearch(debouncedQuery);
-    } else {
-      setResults([]);
+      return () => clearTimeout(timer);
     }
-  }, [debouncedQuery, filters]);
+  }, [query, debouncedQuery]);
 
-  const performSearch = useCallback(
-    async (searchQuery: string) => {
-      setIsLoading(true);
-      try {
-        // Use real TMDB API search
-        const apiResponse = await multiSearch(searchQuery, 1);
+  // TanStack Query for search results
+  const {
+    data: searchData,
+    isLoading,
+    isError,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ["search", debouncedQuery, filters],
+    queryFn: () => searchAPI(debouncedQuery, 1),
+    enabled: debouncedQuery.trim().length > 0,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
+    retry: 1,
+  });
 
-        if (apiResponse?.results) {
-          let searchResults = transformSearchResults(apiResponse.results);
-
-          // Apply client-side filtering if needed
-          if (filters.type !== "all") {
-            searchResults = searchResults.filter((result) => result.type === filters.type);
-          }
-
-          setResults(searchResults);
-        } else {
-          setResults([]);
-        }
-      } catch (error) {
-        console.error("Search error:", error);
-        setResults([]);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [filters, multiSearch, transformSearchResults]
-  );
+  // Transform and filter results
+  const results = searchData?.results 
+    ? transformSearchResults(searchData.results).filter(result => 
+        filters.type === "all" || result.type === filters.type
+      )
+    : [];
 
   const addToRecentSearches = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) return;
@@ -93,8 +105,8 @@ export function useSearch() {
   }, []);
 
   const clearResults = useCallback(() => {
-    setResults([]);
     setQuery("");
+    setDebouncedQuery("");
   }, []);
 
   const selectRecentSearch = useCallback(
@@ -109,13 +121,14 @@ export function useSearch() {
     query,
     setQuery,
     results,
-    isLoading: isLoading || apiLoading,
-    error: apiError,
+    isLoading,
+    error: isError ? (error as Error)?.message || "An error occurred" : null,
     filters,
     setFilters,
     recentSearches,
     clearResults,
     selectRecentSearch,
     addToRecentSearches,
+    refetch,
   };
 }

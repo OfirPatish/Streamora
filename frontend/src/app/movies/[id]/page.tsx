@@ -1,7 +1,4 @@
-import { DesktopHeader } from "@/components/layout/DesktopHeader";
-import { MobileHeader } from "@/components/layout/MobileHeader";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { MovieDetail } from "@/components/movies/MovieDetail";
+import { MovieDetail } from "@/components/sections/shared";
 
 interface MoviePageProps {
   params: Promise<{
@@ -18,17 +15,5 @@ export default async function MoviePage({ params }: MoviePageProps) {
     throw new Error("Failed to resolve movie ID");
   }
 
-  return (
-    <div className="min-h-screen w-full bg-background">
-      <DesktopHeader />
-      <MobileHeader />
-
-      <main className="pb-20 lg:pb-0">
-        <MovieDetail id={id} />
-      </main>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
-    </div>
-  );
+  return <MovieDetail id={id} />;
 }

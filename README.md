@@ -5,7 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2+-blue.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A modern, full-stack streaming application similar to Stremio, built with Node.js/Express backend and Next.js frontend. Streamora provides comprehensive movie and series discovery with a sophisticated global data system for optimal performance.
+A modern, full-stack streaming application similar to Stremio, built with Node.js/Express backend and Next.js frontend. Streamora provides comprehensive movie and series discovery with TanStack Query for intelligent data management and optimal performance.
 
 ## ✨ Features
 
@@ -14,7 +14,7 @@ A modern, full-stack streaming application similar to Stremio, built with Node.j
 | 🎬 **Content Discovery** | 1M+ movies, 200K+ series from TMDB        |
 | 🔍 **Smart Search**      | Multi-search with filters and suggestions |
 | 📱 **Responsive Design** | Mobile-first, adaptive layouts            |
-| ⚡ **Performance**       | Global data system, 50% fewer API calls   |
+| ⚡ **Performance**       | TanStack Query, intelligent caching, optimization |
 | 🎨 **Modern UI**         | Shadcn/ui components, dark theme          |
 | 🔒 **Security**          | Rate limiting, CORS, security headers     |
 
@@ -28,7 +28,7 @@ A modern, full-stack streaming application similar to Stremio, built with Node.j
 | **Frontend** | Next.js 15 + React 19 + TypeScript | Modern web application           |
 | **Styling**  | Tailwind CSS + Shadcn/ui           | Utility-first styling            |
 | **Database** | TMDB API                           | Movie and series data            |
-| **Caching**  | Global Data System                 | Frontend optimization            |
+| **Caching**  | TanStack Query                     | Intelligent data management      |
 
 ### Project Structure
 
@@ -48,8 +48,10 @@ streamora/
 │   └── README.md                 # Frontend documentation
 ├── 📁 docs/                       # Additional documentation
 │   ├── STREAMORA_AI_REFERENCE.md # AI reference guide
-│   ├── GLOBAL_DATA_SYSTEM.md     # Performance system docs
 │   └── STREAMORA_BACKEND_SUMMARY.md # Backend API docs
+├── 📁 frontend/                   # Next.js application
+│   ├── TANSTACK_QUERY_GUIDE.md   # TanStack Query documentation
+│   └── README.md                  # Frontend documentation
 └── README.md                      # This file
 ```
 
@@ -88,14 +90,15 @@ npm run dev
 
 ## 📊 Performance Highlights
 
-### Global Data System
+### TanStack Query Data Management
 
-Streamora features a sophisticated **Global Data System** that optimizes performance:
+Streamora features **TanStack Query** for intelligent data management:
 
-- **8 API calls** made once and shared across all components
-- **50% fewer network requests** compared to individual calls
-- **Smart caching** with localStorage and TTL
-- **Real-time synchronization** across components
+- **Automatic caching** with smart invalidation
+- **Background updates** for fresh data
+- **Optimistic updates** for better UX
+- **Built-in error handling** and retry logic
+- **DevTools integration** for debugging
 
 ### Performance Metrics
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Film, Tv, Star } from "lucide-react";
+import { Home, Film, Tv, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export function MobileBottomNav() {
     { icon: Home, label: "Home", href: "/" },
     { icon: Film, label: "Movies", href: "/movies" },
     { icon: Tv, label: "Series", href: "/series" },
-    { icon: Star, label: "Top", href: "/top-rated" },
+    { icon: Bookmark, label: "Watchlist", href: "/watchlist" },
   ];
 
   return (
