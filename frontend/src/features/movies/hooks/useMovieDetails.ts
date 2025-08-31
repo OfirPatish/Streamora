@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { MovieDetails } from "@/types/api";
+import { MovieDetails } from "../types";
 
 // API function for movie details
 async function fetchMovieDetails(id: number) {

@@ -1,26 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { ContentGrid } from "@/components/shared";
+import { ListingPageLayout } from "./ListingPageLayout";
 import { usePreloadedContent } from "@/hooks/usePreloadedContent";
 import { useInfiniteScroll } from "@/hooks/ui/useInfiniteScroll";
 import { Movie, Series } from "@/features/home/types";
-import { Loader2 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  MOVIE_FILTERS,
-  SERIES_FILTERS,
-  MovieFilter,
-  SeriesFilter,
-  ContentType,
-} from "@/lib/constants";
+import { MOVIE_FILTERS, SERIES_FILTERS, MovieFilter, SeriesFilter, ContentType } from "@/lib/constants";
 
 // ============================================================================
 // TRANSFORM FUNCTIONS
@@ -43,9 +29,7 @@ function transformMovieData(movies?: Movie[]): Array<{
   return movies.map((movie, index) => ({
     id: movie.id,
     title: movie.title,
-    year: movie.release_date
-      ? new Date(movie.release_date).getFullYear().toString()
-      : "N/A",
+    year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : "N/A",
     genre: "Movie",
     type: "movie" as const,
     index,
@@ -72,9 +56,7 @@ function transformSeriesData(series?: Series[]): Array<{
   return series.map((show, index) => ({
     id: show.id,
     title: show.name,
-    year: show.first_air_date
-      ? new Date(show.first_air_date).getFullYear().toString()
-      : "N/A",
+    year: show.first_air_date ? new Date(show.first_air_date).getFullYear().toString() : "N/A",
     genre: "TV Show",
     type: "series" as const,
     index,
@@ -107,15 +89,10 @@ export function PaginatedContentSection({
   loading: serverLoading,
   error: serverError,
 }: PaginatedContentSectionProps) {
-  const [activeFilter, setActiveFilter] = useState<MovieFilter | SeriesFilter>(
-    "popular"
-  );
+  const [activeFilter, setActiveFilter] = useState<MovieFilter | SeriesFilter>("popular");
 
   // Get appropriate filters based on content type
   const filters = type === "movie" ? MOVIE_FILTERS : SERIES_FILTERS;
-
-  // Get current filter config
-  const currentFilter = filters.find((filter) => filter.key === activeFilter);
 
   // Always use the hook for pagination functionality, but merge with server data for initial popular filter
   const hookResult = usePreloadedContent({
@@ -135,21 +112,18 @@ export function PaginatedContentSection({
   }, []);
 
   // Use server data initially, then switch to hook data after hydration
-  const items =
-    hasServerData && !isClient ? initialData || [] : hookResult.items || [];
+  const items = hasServerData && !isClient ? initialData || [] : hookResult.items || [];
 
   // For server-side rendering, we need to ensure consistent loading state
   // If we have server data and the hook hasn't loaded yet, don't show loading
   const loading = hasServerData ? false : hookResult.loading;
   const loadingMore = hookResult.loadingMore;
-  const showLoadingSkeleton = hookResult.showLoadingSkeleton;
   const error = hookResult.error || serverError;
 
   // Ensure consistent hasMore state to prevent hydration mismatches
   const hasMore = hasServerData && !isClient ? false : hookResult.hasMore;
   const loadMore = hookResult.loadMore;
   const totalResults = hookResult.totalResults || serverTotalResults || 0;
-  const preloadedFilters = hookResult.preloadedFilters;
 
   // Setup infinite scroll
   const scrollTriggerRef = useInfiniteScroll({
@@ -161,9 +135,7 @@ export function PaginatedContentSection({
 
   // Transform data for ContentGrid based on type
   const transformedItems =
-    type === "movie"
-      ? transformMovieData(items as Movie[])
-      : transformSeriesData(items as Series[]);
+    type === "movie" ? transformMovieData(items as Movie[]) : transformSeriesData(items as Series[]);
 
   // Handle filter change
   const handleFilterChange = (filterKey: MovieFilter | SeriesFilter) => {
@@ -181,92 +153,36 @@ export function PaginatedContentSection({
             Failed to load {type === "movie" ? "movies" : "TV shows"}
           </div>
           <div className="text-muted-foreground mb-6">{error}</div>
-          <Button
+          <button
             onClick={() => window.location.reload()}
-            variant="outline"
-            className="bg-background/50 hover:bg-background/80 border-2 border-border/50 hover:border-primary/50 transition-all duration-300"
+            className="px-4 py-2 bg-background/50 hover:bg-background/80 border-2 border-border/50 hover:border-primary/50 rounded-lg transition-all duration-300"
           >
             Try Again
-          </Button>
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`space-y-8 ${className}`}>
-      {/* Enhanced Filter Section */}
-      <div className="bg-gradient-to-r from-muted/30 to-muted/50 rounded-xl p-6 border border-border/50">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          {/* Filter Select */}
-          <Select value={activeFilter} onValueChange={handleFilterChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select filter" />
-            </SelectTrigger>
-            <SelectContent>
-              {filters.map((filter) => (
-                <SelectItem key={filter.key} value={filter.key}>
-                  {filter.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Filter Status & Info */}
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Showing:</span>
-              <span className="font-medium text-foreground">
-                {filters.find((f) => f.key === activeFilter)?.label}
-              </span>
-            </div>
-            {totalResults > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">•</span>
-                <span className="text-muted-foreground">
-                  {totalResults.toLocaleString()}{" "}
-                  {type === "movie" ? "movies" : "TV shows"}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
+    <ListingPageLayout
+      type={type}
+      filters={filters}
+      activeFilter={activeFilter}
+      onFilterChange={handleFilterChange}
+      totalResults={totalResults}
+      loading={loading}
+      loadingMore={loadingMore}
+      hasMore={hasMore}
+      onLoadMore={loadMore}
+      className={className}
+    >
       {/* Content Grid */}
-      <div className="space-y-6">
-        <ContentGrid items={transformedItems} />
-
-        {/* Load More Button */}
-        {hasMore && !loadingMore && (
-          <div className="flex justify-center pt-6">
-            <Button
-              onClick={loadMore}
-              variant="outline"
-              size="lg"
-              className="bg-background/50 hover:bg-background/80 border-2 border-border/50 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Load More
-            </Button>
-          </div>
-        )}
-
-        {/* Loading More Spinner */}
-        {loadingMore && (
-          <div className="flex justify-center pt-6">
-            <div className="flex items-center gap-3 bg-muted/30 rounded-lg px-6 py-3">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
-              <span className="text-sm text-muted-foreground font-medium">
-                Loading more content...
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
+      <ContentGrid items={transformedItems} />
 
       {/* Infinite Scroll Trigger */}
       <div ref={scrollTriggerRef} className="h-4" />
-    </div>
+    </ListingPageLayout>
   );
 }
 

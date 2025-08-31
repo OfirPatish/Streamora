@@ -2,8 +2,10 @@
 import dotenv from "dotenv";
 import path from "path";
 
-// Configure dotenv to look for .env file in the backend directory
-dotenv.config({ path: path.join(__dirname, "..", ".env") });
+// Configure dotenv to look for .env file in the src directory
+// This works for both Windows and macOS
+const envPath = path.resolve(__dirname, ".env");
+dotenv.config({ path: envPath });
 
 import express from "express";
 import cors from "cors";
@@ -11,7 +13,6 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import { rateLimit } from "express-rate-limit";
-
 import { errorHandler } from "./middleware/errorHandler";
 import { notFoundHandler } from "./middleware/notFoundHandler";
 import { movieRoutes } from "./routes/movieRoutes";
