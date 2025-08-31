@@ -3,10 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { PageTemplate } from "@/components/layout/PageTemplate";
-import { ContentSection } from "@/components/layout/PageContentWrapper";
-import { SearchResults } from "@/components/sections/search";
-import { SearchFilters } from "@/components/sections/search";
-import { useSearch } from "@/hooks/api/useSearch";
+import { ListingPageWrapper } from "@/components/layout/ListingPageWrapper";
+import { SearchResultsList, SearchFilters } from "@/features/search";
+import { useSearch } from "@/features/search";
 import { Typography } from "@/components/ui/typography";
 
 export default function SearchPage() {
@@ -24,7 +23,7 @@ export default function SearchPage() {
 
   return (
     <PageTemplate>
-      <ContentSection
+      <ListingPageWrapper
         title="🔍 Search Results"
         subtitle={query ? `Showing results for "${query}"` : "Search for movies and TV shows"}
         loading={isLoading}
@@ -35,9 +34,9 @@ export default function SearchPage() {
           <SearchFilters filters={filters} onFiltersChange={setFilters} resultsCount={results.length} />
 
           {/* Search Results */}
-          <SearchResults results={results} isLoading={isLoading} query={query} />
+          <SearchResultsList results={results} isLoading={isLoading} query={query} />
         </div>
-      </ContentSection>
+      </ListingPageWrapper>
     </PageTemplate>
   );
 }

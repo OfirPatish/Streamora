@@ -15,44 +15,9 @@ export interface FeaturedContent {
   poster_path?: string | null;
 }
 
-export interface Movie {
-  id: number;
-  title: string;
-  overview: string;
-  release_date: string;
-  runtime: number;
-  vote_average: number;
-  vote_count: number;
-  poster_path: string;
-  backdrop_path: string;
-  genres: Array<{ id: number; name: string }>;
-  credits?: {
-    cast: Array<{ id: number; name: string; character: string }>;
-    crew: Array<{ id: number; name: string; job: string }>;
-  };
-  videos?: {
-    results: Array<{ key: string; name: string; type: string }>;
-  };
-}
-
-export interface Series {
-  id: number;
-  name: string;
-  overview: string;
-  first_air_date: string;
-  last_air_date: string;
-  number_of_seasons: number;
-  number_of_episodes: number;
-  poster_path: string;
-  backdrop_path: string;
-  genres: Array<{ id: number; name: string }>;
-  seasons?: Array<{
-    id: number;
-    name: string;
-    episode_count: number;
-    air_date: string;
-  }>;
-}
+// Note: Movie and Series types have been moved to feature-specific type files
+// - Movie: /features/movies/types/index.ts
+// - Series: /features/series/types/index.ts
 
 export interface ContentItem {
   id: number;

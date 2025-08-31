@@ -251,13 +251,18 @@ class FrontendCacheService {
   }
 }
 
-// Cache TTL constants (in seconds)
+// Cache TTL constants (in seconds) - now using centralized constants
+import { getCacheTimes } from "./constants";
+
+// Helper function to convert milliseconds to seconds
+const msToSeconds = (ms: number) => Math.floor(ms / 1000);
+
 export const CACHE_TTL = {
   TRENDING: 30 * 60, // 30 minutes
-  POPULAR: 2 * 60 * 60, // 2 hours
-  TOP_RATED: 6 * 60 * 60, // 6 hours
-  NOW_PLAYING: 1 * 60 * 60, // 1 hour
-  UPCOMING: 4 * 60 * 60, // 4 hours
+  POPULAR: msToSeconds(getCacheTimes("/movies/popular").staleTime),
+  TOP_RATED: msToSeconds(getCacheTimes("/movies/top-rated").staleTime),
+  NOW_PLAYING: msToSeconds(getCacheTimes("/movies/now-playing").staleTime),
+  UPCOMING: msToSeconds(getCacheTimes("/movies/upcoming").staleTime),
   MOVIE_DETAILS: 24 * 60 * 60, // 24 hours
   SERIES_DETAILS: 24 * 60 * 60, // 24 hours
   SEARCH: 10 * 60, // 10 minutes

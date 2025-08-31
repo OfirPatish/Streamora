@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Search, Bell, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   NavigationMenu,
@@ -26,7 +25,9 @@ export function DesktopHeader() {
       <div className="flex items-center gap-6 py-3 px-8">
         {/* Logo - Left */}
         <div className="flex-shrink-0">
-          <h1 className="text-2xl font-bold text-white">Streamora</h1>
+          <Link href="/" className="block">
+            <h1 className="text-2xl font-bold text-red-500">STREAMORA</h1>
+          </Link>
         </div>
 
         {/* Navigation Menu - Left side next to logo */}

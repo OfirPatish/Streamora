@@ -4,6 +4,7 @@
  */
 
 import { frontendCache, CACHE_TTL } from "./cache";
+import { getCacheTimes } from "./constants";
 
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
@@ -137,19 +138,20 @@ class ApiClient {
 
   // Determine appropriate cache TTL based on endpoint
   private getTTLForEndpoint(endpoint: string): number {
-    if (endpoint.includes("/popular")) return CACHE_TTL.POPULAR;
-    if (endpoint.includes("/top-rated") || endpoint.includes("/top_rated")) return CACHE_TTL.TOP_RATED;
-    if (endpoint.includes("/now-playing") || endpoint.includes("/now_playing")) return CACHE_TTL.NOW_PLAYING;
-    if (endpoint.includes("/upcoming")) return CACHE_TTL.UPCOMING;
-    if (endpoint.includes("/on-the-air") || endpoint.includes("/on_the_air")) return CACHE_TTL.POPULAR;
-    if (endpoint.includes("/airing-today") || endpoint.includes("/airing_today")) return CACHE_TTL.TRENDING;
-    if (endpoint.includes("/search")) return CACHE_TTL.SEARCH;
-    if (endpoint.includes("/genres")) return CACHE_TTL.GENRES;
-    if (endpoint.match(/\/(movies|series)\/\d+$/)) return CACHE_TTL.MOVIE_DETAILS;
-    if (endpoint.includes("/credits") || endpoint.includes("/videos")) return CACHE_TTL.MOVIE_DETAILS;
+    // Use centralized cache times for known endpoints
+    try {
+      const { staleTime } = getCacheTimes(endpoint);
+      return Math.floor(staleTime / 1000); // Convert ms to seconds
+    } catch {
+      // Fallback for unknown endpoints
+      if (endpoint.includes("/search")) return CACHE_TTL.SEARCH;
+      if (endpoint.includes("/genres")) return CACHE_TTL.GENRES;
+      if (endpoint.match(/\/(movies|series)\/\d+$/)) return CACHE_TTL.MOVIE_DETAILS;
+      if (endpoint.includes("/credits") || endpoint.includes("/videos")) return CACHE_TTL.MOVIE_DETAILS;
 
-    // Default TTL
-    return CACHE_TTL.POPULAR;
+      // Default TTL
+      return CACHE_TTL.POPULAR;
+    }
   }
 
   // POST request

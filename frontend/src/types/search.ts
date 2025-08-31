@@ -1,31 +1,17 @@
 // Search-related types
 
-export interface SearchResult {
-  id: number;
-  title: string;
-  type: "movie" | "series";
-  year?: string;
-  overview?: string;
-  poster_path?: string;
-  media_type?: string;
-  rating?: number;
-}
+// Note: SearchResult and SearchFilters types have been moved to feature-specific type file
+// - SearchResult, SearchFilters: /features/search/types/index.ts
 
-export interface SearchFilters {
-  type: "all" | "movie" | "series";
-  year?: string;
-  genre?: string;
-  rating?: number;
-}
-
+// Note: SearchQuery and SearchResponse types are kept here as they are shared across features
 export interface SearchQuery {
   query: string;
-  filters?: SearchFilters;
+  filters?: any; // Import from /features/search/types if needed
   page?: number;
 }
 
 export interface SearchResponse {
-  results: SearchResult[];
+  results: any[]; // Import from /features/search/types if needed
   total_results: number;
   total_pages: number;
   page: number;

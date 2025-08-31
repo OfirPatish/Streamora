@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -13,7 +14,9 @@ export function MobileHeader() {
         <div className="flex items-center justify-between py-3">
           {/* Logo - Left */}
           <div className="flex-shrink-0">
-            <h1 className="text-xl font-bold text-foreground">Streamora</h1>
+            <Link href="/" className="block">
+              <h1 className="text-xl font-bold text-red-500">STREAMORA</h1>
+            </Link>
           </div>
 
           {/* Search Bar - Right */}

@@ -1,0 +1,1 @@
+export { useSeriesDetails } from "./useSeriesDetails";
