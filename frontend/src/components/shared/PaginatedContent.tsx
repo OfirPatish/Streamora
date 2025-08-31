@@ -5,9 +5,22 @@ import { Button } from "@/components/ui/button";
 import { ContentGrid } from "@/components/shared";
 import { usePreloadedContent } from "@/hooks/usePreloadedContent";
 import { useInfiniteScroll } from "@/hooks/ui/useInfiniteScroll";
-import { Movie, Series } from "@/types/api";
+import { Movie, Series } from "@/features/home/types";
 import { Loader2 } from "lucide-react";
-import { MOVIE_FILTERS, SERIES_FILTERS, MovieFilter, SeriesFilter, ContentType } from "@/lib/constants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  MOVIE_FILTERS,
+  SERIES_FILTERS,
+  MovieFilter,
+  SeriesFilter,
+  ContentType,
+} from "@/lib/constants";
 
 // ============================================================================
 // TRANSFORM FUNCTIONS
@@ -30,7 +43,9 @@ function transformMovieData(movies?: Movie[]): Array<{
   return movies.map((movie, index) => ({
     id: movie.id,
     title: movie.title,
-    year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : "N/A",
+    year: movie.release_date
+      ? new Date(movie.release_date).getFullYear().toString()
+      : "N/A",
     genre: "Movie",
     type: "movie" as const,
     index,
@@ -57,7 +72,9 @@ function transformSeriesData(series?: Series[]): Array<{
   return series.map((show, index) => ({
     id: show.id,
     title: show.name,
-    year: show.first_air_date ? new Date(show.first_air_date).getFullYear().toString() : "N/A",
+    year: show.first_air_date
+      ? new Date(show.first_air_date).getFullYear().toString()
+      : "N/A",
     genre: "TV Show",
     type: "series" as const,
     index,
@@ -90,7 +107,9 @@ export function PaginatedContentSection({
   loading: serverLoading,
   error: serverError,
 }: PaginatedContentSectionProps) {
-  const [activeFilter, setActiveFilter] = useState<MovieFilter | SeriesFilter>("popular");
+  const [activeFilter, setActiveFilter] = useState<MovieFilter | SeriesFilter>(
+    "popular"
+  );
 
   // Get appropriate filters based on content type
   const filters = type === "movie" ? MOVIE_FILTERS : SERIES_FILTERS;
@@ -116,7 +135,8 @@ export function PaginatedContentSection({
   }, []);
 
   // Use server data initially, then switch to hook data after hydration
-  const items = hasServerData && !isClient ? initialData || [] : hookResult.items || [];
+  const items =
+    hasServerData && !isClient ? initialData || [] : hookResult.items || [];
 
   // For server-side rendering, we need to ensure consistent loading state
   // If we have server data and the hook hasn't loaded yet, don't show loading
@@ -141,7 +161,9 @@ export function PaginatedContentSection({
 
   // Transform data for ContentGrid based on type
   const transformedItems =
-    type === "movie" ? transformMovieData(items as Movie[]) : transformSeriesData(items as Series[]);
+    type === "movie"
+      ? transformMovieData(items as Movie[])
+      : transformSeriesData(items as Series[]);
 
   // Handle filter change
   const handleFilterChange = (filterKey: MovieFilter | SeriesFilter) => {
@@ -149,27 +171,6 @@ export function PaginatedContentSection({
       setActiveFilter(filterKey);
     }
   };
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className={`space-y-8 ${className}`}>
-        {/* Enhanced Filter Section Skeleton */}
-        <div className="bg-gradient-to-r from-muted/30 to-muted/50 rounded-xl p-6 border border-border/50">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Filter buttons skeleton */}
-            <div className="flex flex-wrap gap-3">
-              {filters.map((filter) => (
-                <div key={filter.key} className="h-9 w-20 bg-muted/50 rounded-md animate-pulse" />
-              ))}
-            </div>
-            {/* Results count skeleton */}
-            <div className="h-5 w-32 bg-muted/50 rounded animate-pulse" />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Error state
   if (error) {
@@ -197,37 +198,38 @@ export function PaginatedContentSection({
       {/* Enhanced Filter Section */}
       <div className="bg-gradient-to-r from-muted/30 to-muted/50 rounded-xl p-6 border border-border/50">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap gap-3">
-            {filters.map((filter) => {
-              const isActive = activeFilter === filter.key;
-              const isPreloaded = preloadedFilters.find((p) => p.key === filter.key)?.isLoaded;
+          {/* Filter Select */}
+          <Select value={activeFilter} onValueChange={handleFilterChange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select filter" />
+            </SelectTrigger>
+            <SelectContent>
+              {filters.map((filter) => (
+                <SelectItem key={filter.key} value={filter.key}>
+                  {filter.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-              return (
-                <div key={filter.key}>
-                  <Button
-                    variant={isActive ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handleFilterChange(filter.key)}
-                    className={`transition-all duration-300 font-medium relative ${
-                      isActive
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
-                        : "hover:bg-muted/50 border-border/50"
-                    }`}
-                  >
-                    {filter.label}
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Results Count */}
-          {totalResults > 0 && (
-            <div className="text-sm text-muted-foreground font-medium">
-              {totalResults.toLocaleString()} {type === "movie" ? "movies" : "TV shows"} found
+          {/* Filter Status & Info */}
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">Showing:</span>
+              <span className="font-medium text-foreground">
+                {filters.find((f) => f.key === activeFilter)?.label}
+              </span>
             </div>
-          )}
+            {totalResults > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">•</span>
+                <span className="text-muted-foreground">
+                  {totalResults.toLocaleString()}{" "}
+                  {type === "movie" ? "movies" : "TV shows"}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -254,7 +256,9 @@ export function PaginatedContentSection({
           <div className="flex justify-center pt-6">
             <div className="flex items-center gap-3 bg-muted/30 rounded-lg px-6 py-3">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
-              <span className="text-sm text-muted-foreground font-medium">Loading more content...</span>
+              <span className="text-sm text-muted-foreground font-medium">
+                Loading more content...
+              </span>
             </div>
           </div>
         )}
