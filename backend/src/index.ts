@@ -2,10 +2,22 @@
 import dotenv from "dotenv";
 import path from "path";
 
-// Configure dotenv to look for .env file in the src directory
+// Configure dotenv to look for .env file in the backend directory (one level up from src)
 // This works for both Windows and macOS
-const envPath = path.resolve(__dirname, ".env");
-dotenv.config({ path: envPath });
+const envPath = path.resolve(__dirname, "..", ".env");
+console.log("🔍 Looking for .env file at:", envPath);
+console.log("📁 Current __dirname:", __dirname);
+
+const result = dotenv.config({ path: envPath });
+if (result.error) {
+  console.error("❌ Error loading .env file:", result.error);
+} else {
+  console.log("✅ .env file loaded successfully");
+  console.log(
+    "🔑 Environment variables loaded:",
+    Object.keys(result.parsed || {})
+  );
+}
 
 import express from "express";
 import cors from "cors";

@@ -25,23 +25,19 @@ export function FeaturedCard({
       <Link href={href} className="block">
         <Card className="cursor-pointer w-full relative overflow-hidden bg-transparent border-transparent p-0">
           <CardContent className="p-0 w-full relative">
-            {/* Poster Container */}
-            <div className="relative w-full aspect-[2/3] overflow-hidden rounded-lg">
+            {/* Poster Container - Border on Hover */}
+            <div className="relative w-full aspect-[2/3] overflow-hidden rounded-lg border-2 border-transparent hover:border-primary/60 hover:shadow-lg transition-all duration-300">
               {posterPath && posterUrl ? (
-                <>
-                  <Image
-                    src={posterUrl}
-                    alt={title}
-                    fill
-                    priority={priority}
-                    className="object-cover"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
-                  {/* Gray overlay on hover */}
-                  <div className="absolute inset-0 bg-gray-500/30 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                </>
+                <Image
+                  src={posterUrl}
+                  alt={title}
+                  fill
+                  priority={priority}
+                  className="object-cover rounded-lg"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                <div className="w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center rounded-lg">
                   <div className="text-muted-foreground text-center">
                     <div className="text-4xl mb-2">🎬</div>
                     <div className="text-sm">No Image</div>
@@ -52,7 +48,9 @@ export function FeaturedCard({
 
             {/* Title Only - Centered */}
             <div className="mt-2 text-center">
-              <h3 className="text-sm font-semibold line-clamp-2 leading-tight text-foreground">{title}</h3>
+              <h3 className="text-sm font-semibold line-clamp-2 leading-tight text-foreground">
+                {title}
+              </h3>
             </div>
           </CardContent>
         </Card>
