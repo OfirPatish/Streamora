@@ -1,30 +1,58 @@
 "use client";
 
 import { usePaginatedContent } from "./useUnifiedContent";
-import { Movie, Series } from "@/types/api";
 import { MOVIE_FILTERS, SERIES_FILTERS } from "@/lib/constants";
+
+// Simple types for listing data
+interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  release_date: string;
+  vote_average: number;
+  poster_path: string;
+  backdrop_path?: string;
+}
+
+interface Series {
+  id: number;
+  name: string;
+  overview: string;
+  first_air_date: string;
+  vote_average: number;
+  poster_path: string;
+  backdrop_path?: string;
+}
 
 interface UsePreloadedContentProps {
   type: "movie" | "series";
   activeFilter: string;
 }
 
-export function usePreloadedContent({ type, activeFilter }: UsePreloadedContentProps) {
+export function usePreloadedContent({
+  type,
+  activeFilter,
+}: UsePreloadedContentProps) {
   const filters = type === "movie" ? MOVIE_FILTERS : SERIES_FILTERS;
 
   // Get the active filter config
-  const activeFilterConfig = filters.find((filter) => filter.key === activeFilter);
+  const activeFilterConfig = filters.find(
+    (filter) => filter.key === activeFilter
+  );
 
   // Use the main hook for the active filter
   const mainQuery = usePaginatedContent<Movie | Series>(
-    activeFilterConfig?.endpoint || (type === "movie" ? "/movies/popular" : "/series/popular")
+    activeFilterConfig?.endpoint ||
+      (type === "movie" ? "/movies/popular" : "/series/popular")
   );
 
   // Preload all other filters in the background
   const otherFilters = filters.filter((filter) => filter.key !== activeFilter);
 
   // Create background queries for other filters
-  const backgroundQueries = otherFilters.map((filter) => usePaginatedContent<Movie | Series>(filter.endpoint));
+  const backgroundQueries = otherFilters.map((filter) =>
+    usePaginatedContent<Movie | Series>(filter.endpoint)
+  );
 
   return {
     // Return the main query data
@@ -47,7 +75,9 @@ export function usePreloadedContent({ type, activeFilter }: UsePreloadedContentP
         return mainQuery;
       }
 
-      const filterIndex = otherFilters.findIndex((filter) => filter.key === filterKey);
+      const filterIndex = otherFilters.findIndex(
+        (filter) => filter.key === filterKey
+      );
       if (filterIndex >= 0 && backgroundQueries[filterIndex]) {
         return backgroundQueries[filterIndex];
       }

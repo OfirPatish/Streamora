@@ -9,4 +9,4 @@ export { SeriesDetail } from "./components/SeriesDetail";
 export { useSeriesDetails } from "./hooks/useSeriesDetails";
 
 // Types
-export type { SeriesFeatureTypes } from "./types";
+export type { SeriesDetails, SeriesDetailProps } from "./types";

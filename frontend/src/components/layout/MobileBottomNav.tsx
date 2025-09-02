@@ -10,8 +10,7 @@ export function MobileBottomNav() {
 
   const navItems = [
     { icon: Home, label: "Home", href: "/" },
-    { icon: Film, label: "Movies", href: "/movies" },
-    { icon: Tv, label: "Series", href: "/series" },
+    { icon: Film, label: "Movies & Shows", href: "/movies-shows" },
     { icon: Bookmark, label: "Watchlist", href: "/watchlist" },
   ];
 

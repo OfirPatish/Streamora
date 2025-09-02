@@ -1,6 +1,6 @@
 "use client";
 
-import { FeaturedCarousel } from "./FeaturedCarousel";
+import { ContentCarousel } from "./ContentCarousel";
 import { Movie, Series } from "../types";
 
 // Transform API data to ContentGrid format
@@ -24,7 +24,9 @@ function transformMovieData(movies: Movie[] | undefined): Array<{
   return movies.map((movie, index) => ({
     id: movie.id,
     title: movie.title,
-    year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : "N/A",
+    year: movie.release_date
+      ? new Date(movie.release_date).getFullYear().toString()
+      : "N/A",
     genre: "Movie",
     type: "movie" as const,
     index,
@@ -55,7 +57,9 @@ function transformSeriesData(series: Series[] | undefined): Array<{
   return series.map((show, index) => ({
     id: show.id,
     title: show.name,
-    year: show.first_air_date ? new Date(show.first_air_date).getFullYear().toString() : "N/A",
+    year: show.first_air_date
+      ? new Date(show.first_air_date).getFullYear().toString()
+      : "N/A",
     genre: "TV Show",
     type: "series" as const,
     index,
@@ -66,7 +70,7 @@ function transformSeriesData(series: Series[] | undefined): Array<{
   }));
 }
 
-interface HomeContentProps {
+interface GridProps {
   nowPlayingMovies: any[];
   topRatedMovies: any[];
   onTheAirSeries: any[];
@@ -75,14 +79,14 @@ interface HomeContentProps {
   error: string | null;
 }
 
-export function HomeContent({
+export function ContentGrid({
   nowPlayingMovies,
   topRatedMovies,
   onTheAirSeries,
   topRatedSeries,
   loading,
   error,
-}: HomeContentProps) {
+}: GridProps) {
   // Transform data for components using passed props
   const transformedNowPlayingMovies = transformMovieData(nowPlayingMovies);
   const transformedTopRatedMovies = transformMovieData(topRatedMovies);
@@ -93,7 +97,7 @@ export function HomeContent({
     <section className="w-full py-4">
       <div className="space-y-2">
         {/* Now Playing Movies */}
-        <FeaturedCarousel
+        <ContentCarousel
           title="Now Playing Movies"
           items={transformedNowPlayingMovies}
           loading={loading}
@@ -101,10 +105,15 @@ export function HomeContent({
         />
 
         {/* Top Rated Movies */}
-        <FeaturedCarousel title="Top Rated Movies" items={transformedTopRatedMovies} loading={loading} error={error} />
+        <ContentCarousel
+          title="Top Rated Movies"
+          items={transformedTopRatedMovies}
+          loading={loading}
+          error={error}
+        />
 
         {/* On The Air TV Shows */}
-        <FeaturedCarousel
+        <ContentCarousel
           title="On The Air TV Shows"
           items={transformedOnTheAirSeries}
           loading={loading}
@@ -112,7 +121,7 @@ export function HomeContent({
         />
 
         {/* Top Rated TV Shows */}
-        <FeaturedCarousel
+        <ContentCarousel
           title="Top Rated TV Shows"
           items={transformedTopRatedSeries}
           loading={loading}

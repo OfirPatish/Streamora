@@ -7,7 +7,8 @@ import { frontendCache, CACHE_TTL } from "./cache";
 import { getCacheTimes } from "./constants";
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
 // TMDB Image Configuration
 export const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
@@ -62,7 +63,10 @@ class ApiClient {
     this.baseURL = baseURL;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
 
     try {
@@ -96,8 +100,15 @@ class ApiClient {
       const responseData = await response.json();
 
       // Handle backend ApiResponse wrapper format
-      if (responseData && typeof responseData === "object" && "success" in responseData && "data" in responseData) {
-        console.log("📦 API Response wrapped in ApiResponse format, extracting data field");
+      if (
+        responseData &&
+        typeof responseData === "object" &&
+        "success" in responseData &&
+        "data" in responseData
+      ) {
+        console.log(
+          "📦 API Response wrapped in ApiResponse format, extracting data field"
+        );
         return responseData.data;
       }
 
@@ -108,14 +119,22 @@ class ApiClient {
       }
 
       // Network or other errors
-      throw new ApiError(error instanceof Error ? error.message : "An unknown error occurred");
+      throw new ApiError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   }
 
   // GET request with caching
-  async get<T>(endpoint: string, params?: Record<string, string | number>): Promise<T> {
+  async get<T>(
+    endpoint: string,
+    params?: Record<string, string | number>
+  ): Promise<T> {
     const searchParams = params
-      ? "?" + new URLSearchParams(Object.entries(params).map(([key, value]) => [key, String(value)])).toString()
+      ? "?" +
+        new URLSearchParams(
+          Object.entries(params).map(([key, value]) => [key, String(value)])
+        ).toString()
       : "";
 
     const fullEndpoint = `${endpoint}${searchParams}`;
@@ -146,8 +165,10 @@ class ApiClient {
       // Fallback for unknown endpoints
       if (endpoint.includes("/search")) return CACHE_TTL.SEARCH;
       if (endpoint.includes("/genres")) return CACHE_TTL.GENRES;
-      if (endpoint.match(/\/(movies|series)\/\d+$/)) return CACHE_TTL.MOVIE_DETAILS;
-      if (endpoint.includes("/credits") || endpoint.includes("/videos")) return CACHE_TTL.MOVIE_DETAILS;
+      if (endpoint.match(/\/(movies|series)\/\d+$/))
+        return CACHE_TTL.MOVIE_DETAILS;
+      if (endpoint.includes("/credits") || endpoint.includes("/videos"))
+        return CACHE_TTL.MOVIE_DETAILS;
 
       // Default TTL
       return CACHE_TTL.POPULAR;

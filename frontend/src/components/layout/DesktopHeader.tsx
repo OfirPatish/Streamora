@@ -42,45 +42,30 @@ export function DesktopHeader() {
                 >
                   <Link
                     href="/"
-                    className={cn("text-white/80 hover:text-white transition-colors", pathname === "/" && "text-white")}
+                    className={cn(
+                      "text-white/80 hover:text-white transition-colors",
+                      pathname === "/" && "text-white"
+                    )}
                   >
                     Home
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              {/* Movies */}
+              {/* Movies & Shows */}
               <NavigationMenuItem>
                 <NavigationMenuLink
                   asChild
                   className="group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-transparent focus:bg-transparent focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-transparent data-[state=open]:bg-transparent"
                 >
                   <Link
-                    href="/movies"
+                    href="/movies-shows"
                     className={cn(
                       "text-white/80 hover:text-white transition-colors",
-                      pathname === "/movies" && "text-white"
+                      pathname === "/movies-shows" && "text-white"
                     )}
                   >
-                    Movies
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              {/* TV Shows */}
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  asChild
-                  className="group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-transparent focus:bg-transparent focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-transparent data-[state=open]:bg-transparent"
-                >
-                  <Link
-                    href="/series"
-                    className={cn(
-                      "text-white/80 hover:text-white transition-colors",
-                      pathname === "/series" && "text-white"
-                    )}
-                  >
-                    TV Shows
+                    Movies & Shows
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>

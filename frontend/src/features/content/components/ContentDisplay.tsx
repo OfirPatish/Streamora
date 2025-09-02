@@ -1,43 +1,23 @@
 "use client";
 
-import { ContentCard } from "./ContentCard";
-
+import { MediaCard } from "./MediaCard";
 import { SectionTitle, Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
-// ============================================================================
-// INTERFACES
-// ============================================================================
+import { ContentItem, DisplayProps } from "../types";
 
-interface ContentItem {
-  id: number;
-  title: string;
-  year: string;
-  genre: string;
-  type: "movie" | "series";
-  index: number;
-  rating?: number;
-  isNew?: boolean;
-  posterPath?: string | null;
-}
-
-interface ContentDisplayProps {
-  title?: string;
-  items: ContentItem[];
-  layout?: "grid" | "carousel";
-  showViewAll?: boolean;
-  viewAllUrl?: string;
-  loading?: boolean;
-  error?: string | null;
-  // Pagination support (for grid layout)
-  enablePagination?: boolean;
-  onLoadMore?: () => void;
-  hasMore?: boolean;
-  loadingMore?: boolean;
-}
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 
 // ============================================================================
 // MAIN COMPONENT
@@ -51,11 +31,16 @@ export function ContentDisplay({
   viewAllUrl,
   loading = false,
   error = null,
+  showViewCount = false,
+  showDuration = false,
+  showReleaseDate = false,
+  showRating = false,
+  showEpisodeCount = false,
   enablePagination = false,
   onLoadMore,
   hasMore = false,
   loadingMore = false,
-}: ContentDisplayProps) {
+}: DisplayProps) {
   // Auto-determine URL based on content type if not explicitly provided
   const getViewAllUrl = () => {
     if (viewAllUrl) return viewAllUrl;
@@ -72,7 +57,11 @@ export function ContentDisplay({
     if (!title) return null;
 
     return (
-      <div className={`flex items-center justify-between mb-6 ${layout === "carousel" ? "px-8" : ""}`}>
+      <div
+        className={`flex items-center justify-between mb-6 ${
+          layout === "carousel" ? "px-8" : ""
+        }`}
+      >
         <SectionTitle className="mb-0">{title}</SectionTitle>
         {showViewAll && !loading && !error && (
           <Link href={getViewAllUrl()}>
@@ -87,7 +76,12 @@ export function ContentDisplay({
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </Link>
@@ -179,7 +173,7 @@ export function ContentDisplay({
                   key={item.id}
                   className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
                 >
-                  <ContentCard
+                  <MediaCard
                     id={item.id}
                     title={item.title}
                     year={item.year}
@@ -190,6 +184,15 @@ export function ContentDisplay({
                     isNew={item.isNew}
                     posterPath={item.posterPath}
                     priority={index < 6}
+                    showViewCount={showViewCount}
+                    showDuration={showDuration}
+                    showReleaseDate={showReleaseDate}
+                    showRating={showRating}
+                    showEpisodeCount={showEpisodeCount}
+                    viewCount={item.viewCount}
+                    duration={item.duration}
+                    releaseDate={item.releaseDate}
+                    episodeCount={item.episodeCount}
                   />
                 </CarouselItem>
               ))}
@@ -204,7 +207,7 @@ export function ContentDisplay({
     return (
       <div className="content-grid">
         {items.map((item, index) => (
-          <ContentCard
+          <MediaCard
             key={item.id}
             id={item.id}
             title={item.title}
@@ -216,6 +219,15 @@ export function ContentDisplay({
             isNew={item.isNew}
             posterPath={item.posterPath}
             priority={index < 6}
+            showViewCount={showViewCount}
+            showDuration={showDuration}
+            showReleaseDate={showReleaseDate}
+            showRating={showRating}
+            showEpisodeCount={showEpisodeCount}
+            viewCount={item.viewCount}
+            duration={item.duration}
+            releaseDate={item.releaseDate}
+            episodeCount={item.episodeCount}
           />
         ))}
       </div>
@@ -224,7 +236,8 @@ export function ContentDisplay({
 
   // Render pagination (grid only)
   const renderPagination = () => {
-    if (layout !== "grid" || !enablePagination || !hasMore || loadingMore) return null;
+    if (layout !== "grid" || !enablePagination || !hasMore || loadingMore)
+      return null;
 
     return (
       <div className="flex justify-center pt-4">
@@ -266,14 +279,11 @@ export function ContentDisplay({
 // ============================================================================
 
 // Convenience component for grid layout
-export function ContentGrid(props: Omit<ContentDisplayProps, "layout">) {
+export function ContentGrid(props: Omit<DisplayProps, "layout">) {
   return <ContentDisplay {...props} layout="grid" />;
 }
 
 // Convenience component for carousel layout
-export function ContentCarousel(props: Omit<ContentDisplayProps, "layout">) {
+export function ContentCarousel(props: Omit<DisplayProps, "layout">) {
   return <ContentDisplay {...props} layout="carousel" />;
 }
-
-// Re-export ContentCard for backward compatibility
-export { ContentCard } from "./ContentCard";

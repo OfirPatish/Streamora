@@ -1,83 +1,50 @@
 import { PageTemplate } from "@/components/layout/PageTemplate";
-import { HeroBanner, HomeContent } from "@/features/home";
 
-// Server-side data fetching
-async function getFeaturedData() {
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-
-    // Fetch featured content for hero banner
-    const [moviesRes, seriesRes, nowPlayingRes, topRatedMoviesRes, onTheAirRes, topRatedSeriesRes] = await Promise.all([
-      fetch(`${apiUrl}/movies/popular`, { next: { revalidate: 60 * 60 } }), // 1 hour
-      fetch(`${apiUrl}/series/popular`, { next: { revalidate: 60 * 60 } }),
-      fetch(`${apiUrl}/movies/now-playing`, { next: { revalidate: 60 * 60 } }),
-      fetch(`${apiUrl}/movies/top-rated`, { next: { revalidate: 60 * 60 * 12 } }), // 12 hours
-      fetch(`${apiUrl}/series/on-the-air`, { next: { revalidate: 60 * 60 } }),
-      fetch(`${apiUrl}/series/top-rated`, { next: { revalidate: 60 * 60 * 12 } }),
-    ]);
-
-    const [movies, series, nowPlaying, topRatedMovies, onTheAir, topRatedSeries] = await Promise.all([
-      moviesRes.ok ? moviesRes.json() : { success: false, data: { results: [] } },
-      seriesRes.ok ? seriesRes.json() : { success: false, data: { results: [] } },
-      nowPlayingRes.ok ? nowPlayingRes.json() : { success: false, data: { results: [] } },
-      topRatedMoviesRes.ok ? topRatedMoviesRes.json() : { success: false, data: { results: [] } },
-      onTheAirRes.ok ? onTheAirRes.json() : { success: false, data: { results: [] } },
-      topRatedSeriesRes.ok ? topRatedSeriesRes.json() : { success: false, data: { results: [] } },
-    ]);
-
-    return {
-      featuredContent: movies.success ? movies.data.results.slice(0, 10) : [],
-      topMovie:
-        topRatedMovies.success && topRatedMovies.data.results.length > 0 ? topRatedMovies.data.results[0] : null,
-      topSeries:
-        topRatedSeries.success && topRatedSeries.data.results.length > 0 ? topRatedSeries.data.results[0] : null,
-      nowPlayingMovies: nowPlaying.success ? nowPlaying.data.results : [],
-      topRatedMovies: topRatedMovies.success ? topRatedMovies.data.results : [],
-      onTheAirSeries: onTheAir.success ? onTheAir.data.results : [],
-      topRatedSeries: topRatedSeries.success ? topRatedSeries.data.results : [],
-      loading: false,
-      error: null,
-    };
-  } catch (error) {
-    console.error("Failed to fetch featured data:", error);
-    return {
-      featuredContent: [],
-      topMovie: null,
-      topSeries: null,
-      nowPlayingMovies: [],
-      topRatedMovies: [],
-      onTheAirSeries: [],
-      topRatedSeries: [],
-      loading: false,
-      error: "Failed to load content",
-    };
-  }
-}
-
-export default async function Home() {
-  const data = await getFeaturedData();
-
+export default function Home() {
   return (
     <PageTemplate>
-      {/* Netflix-style Hero Section with server data */}
-      <HeroBanner
-        featuredContent={data.featuredContent}
-        topMovie={data.topMovie}
-        topSeries={data.topSeries}
-        loading={data.loading}
-        error={data.error}
-      />
+      {/* Simple Landing Page */}
+      <div className="w-full min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
+        {/* Hero Section */}
+        <div className="relative w-full h-[60vh] min-h-[400px] overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-background">
+          <div className="absolute inset-0 bg-grid-white/[0.02] bg-grid-16" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-background/80" />
 
-      {/* Content Sections with server data */}
-      <div className="bg-background">
-        <HomeContent
-          nowPlayingMovies={data.nowPlayingMovies}
-          topRatedMovies={data.topRatedMovies}
-          onTheAirSeries={data.onTheAirSeries}
-          topRatedSeries={data.topRatedSeries}
-          loading={data.loading}
-          error={data.error}
-        />
+          <div className="relative h-full flex items-center justify-center sm:justify-start">
+            <div className="max-w-[1400px] mx-auto px-8 w-full">
+              <div className="text-center sm:text-left">
+                <h1 className="text-5xl lg:text-7xl font-black tracking-tight text-foreground mb-6">
+                  Welcome to Streamora
+                </h1>
+                <p className="text-xl lg:text-2xl text-muted-foreground max-w-2xl mb-8">
+                  Your ultimate destination for movies and TV shows. Discover,
+                  explore, and enjoy endless entertainment.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
+                  <button className="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors">
+                    Explore Movies & Shows
+                  </button>
+                  <button className="px-8 py-4 bg-secondary text-secondary-foreground rounded-lg font-semibold text-lg hover:bg-secondary/90 transition-colors">
+                    Browse Genres
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
+        </div>
+
+        {/* Content Area - Empty for now */}
+        <div className="max-w-[1400px] mx-auto px-8 py-16">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-4">Content Coming Soon</h2>
+            <p className="text-muted-foreground text-lg">
+              This area will showcase featured content, trending movies, and
+              popular TV shows.
+            </p>
+          </div>
+        </div>
       </div>
     </PageTemplate>
   );

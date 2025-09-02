@@ -1,11 +1,10 @@
-import { SearchFilters as SearchFiltersType } from "@/types/search";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Film, Tv, X } from "lucide-react";
 
 interface SearchFiltersProps {
-  filters: SearchFiltersType;
-  onFiltersChange: (filters: SearchFiltersType) => void;
+  filters: any;
+  onFiltersChange: (filters: any) => void;
   resultsCount: number;
 }
 

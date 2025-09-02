@@ -1,5 +1,4 @@
-import { MovieDetail } from "@/features/movies";
-import { MovieDetails } from "@/types/api";
+import { MovieDetail, MovieDetails } from "@/features/movies";
 
 interface MoviePageProps {
   params: Promise<{
@@ -10,7 +9,9 @@ interface MoviePageProps {
 // Server-side data fetching
 async function getMovieDetails(id: string) {
   try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}/movies/${id}`;
+    const apiUrl = `${
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+    }/movies/${id}`;
     const response = await fetch(apiUrl, {
       next: { revalidate: 60 * 60 * 24 }, // 24 hours - movie details change very slowly
     });
@@ -56,5 +57,12 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
   const movieData = await getMovieDetails(id);
 
-  return <MovieDetail id={id} data={movieData.data} loading={movieData.loading} error={movieData.error} />;
+  return (
+    <MovieDetail
+      id={id}
+      data={movieData.data}
+      loading={movieData.loading}
+      error={movieData.error}
+    />
+  );
 }

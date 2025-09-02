@@ -1,9 +1,29 @@
 "use client";
 
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Movie, Series } from "@/types/api";
 import { PaginatedResponse } from "@/lib/api";
 import { getCacheTimes, MOVIE_FILTERS, SERIES_FILTERS } from "@/lib/constants";
+
+// Simple types for listing data
+interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  release_date: string;
+  vote_average: number;
+  poster_path: string;
+  backdrop_path?: string;
+}
+
+interface Series {
+  id: number;
+  name: string;
+  overview: string;
+  first_air_date: string;
+  vote_average: number;
+  poster_path: string;
+  backdrop_path?: string;
+}
 
 // ============================================================================
 // UNIFIED CONTENT HOOK

@@ -19,7 +19,7 @@ export { useNowPlayingMovies, useTopRatedMovies, useOnTheAirSeries, useTopRatedS
 // ============================================================================
 
 // Combined hook for all home page data
-export function useHomeData() {
+export function useContentData() {
   const nowPlayingMovies = useNowPlayingMovies();
   const topRatedMovies = useTopRatedMovies();
   const onTheAirSeries = useOnTheAirSeries();
@@ -36,7 +36,7 @@ export function useHomeData() {
 }
 
 // Combined hook for movie data only
-export function useHomeMovieData() {
+export function useContentMovieData() {
   const nowPlayingMovies = useNowPlayingMovies();
   const topRatedMovies = useTopRatedMovies();
 
@@ -49,7 +49,7 @@ export function useHomeMovieData() {
 }
 
 // Combined hook for series data only
-export function useHomeSeriesData() {
+export function useContentSeriesData() {
   const onTheAirSeries = useOnTheAirSeries();
   const topRatedSeries = useTopRatedSeries();
 

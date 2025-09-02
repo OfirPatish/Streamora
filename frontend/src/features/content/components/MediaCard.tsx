@@ -4,20 +4,9 @@ import { getTMDBImageUrl } from "@/lib/api";
 import Link from "next/link";
 import Image from "next/image";
 
-interface ContentCardProps {
-  id: number;
-  title: string;
-  year: string;
-  genre: string;
-  type: "movie" | "series";
-  index: number;
-  rating?: number;
-  isNew?: boolean;
-  posterPath?: string | null;
-  priority?: boolean;
-}
+import { MediaCardProps } from "../types";
 
-export function ContentCard({
+export function MediaCard({
   id,
   title,
   year,
@@ -28,7 +17,16 @@ export function ContentCard({
   isNew,
   posterPath,
   priority = false,
-}: ContentCardProps) {
+  showViewCount = false,
+  showDuration = false,
+  showReleaseDate = false,
+  showRating = false,
+  showEpisodeCount = false,
+  viewCount,
+  duration,
+  releaseDate,
+  episodeCount,
+}: MediaCardProps) {
   const Icon = type === "movie" ? Film : Tv;
   const href = type === "movie" ? `/movies/${id}` : `/series/${id}`;
   const posterUrl = getTMDBImageUrl(posterPath || null, "poster", "medium");
@@ -59,6 +57,47 @@ export function ContentCard({
               <h3 className="text-sm font-semibold text-center line-clamp-2 leading-tight px-1 text-foreground">
                 {title}
               </h3>
+
+              {/* Additional Info */}
+              <div className="mt-2 space-y-1">
+                {/* View Count */}
+                {showViewCount && viewCount && (
+                  <div className="text-xs text-muted-foreground text-center">
+                    {viewCount >= 1000
+                      ? `${(viewCount / 1000).toFixed(1)}K`
+                      : viewCount}{" "}
+                    views
+                  </div>
+                )}
+
+                {/* Duration */}
+                {showDuration && duration && (
+                  <div className="text-xs text-muted-foreground text-center">
+                    {duration}
+                  </div>
+                )}
+
+                {/* Release Date */}
+                {showReleaseDate && releaseDate && (
+                  <div className="text-xs text-muted-foreground text-center">
+                    Release on {releaseDate}
+                  </div>
+                )}
+
+                {/* Rating */}
+                {showRating && rating && (
+                  <div className="text-xs text-muted-foreground text-center">
+                    ⭐ {rating.toFixed(1)}/5 stars
+                  </div>
+                )}
+
+                {/* Episode Count */}
+                {showEpisodeCount && episodeCount && (
+                  <div className="text-xs text-muted-foreground text-center">
+                    {episodeCount} episodes
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

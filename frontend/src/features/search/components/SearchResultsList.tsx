@@ -1,4 +1,3 @@
-import { SearchResult } from "../types";
 import { Star, Calendar, Film, Tv } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,9 +5,17 @@ import { getTMDBImageUrl } from "@/lib/api";
 import Image from "next/image";
 import Link from "next/link";
 
-import { SearchResultsProps } from "../types";
+interface SearchResultsProps {
+  results: any[];
+  isLoading: boolean;
+  query: string;
+}
 
-export function SearchResults({ results, isLoading, query }: SearchResultsProps) {
+export function SearchResults({
+  results,
+  isLoading,
+  query,
+}: SearchResultsProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -38,7 +45,7 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
     );
   }
 
-  const getTypeIcon = (type: SearchResult["type"]) => {
+  const getTypeIcon = (type: any) => {
     switch (type) {
       case "movie":
         return <Film className="h-4 w-4" />;
@@ -49,7 +56,7 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
     }
   };
 
-  const getTypeColor = (type: SearchResult["type"]) => {
+  const getTypeColor = (type: any) => {
     switch (type) {
       case "movie":
         return "bg-primary";
@@ -60,7 +67,7 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
     }
   };
 
-  const getResultLink = (result: SearchResult) => {
+  const getResultLink = (result: any) => {
     switch (result.type) {
       case "movie":
         return `/movies/${result.id}`;
@@ -74,7 +81,8 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
   return (
     <div className="space-y-4">
       <div className="text-sm text-muted-foreground mb-4">
-        Found {results.length} result{results.length !== 1 ? "s" : ""} for "{query}"
+        Found {results.length} result{results.length !== 1 ? "s" : ""} for "
+        {query}"
       </div>
 
       {results.map((result) => (
@@ -86,7 +94,13 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
                 <div className="w-16 h-24 bg-muted rounded-lg flex items-center justify-center flex-shrink-0 relative overflow-hidden">
                   {result.poster_path ? (
                     <Image
-                      src={getTMDBImageUrl(result.poster_path || null, "poster", "small") || ""}
+                      src={
+                        getTMDBImageUrl(
+                          result.poster_path || null,
+                          "poster",
+                          "small"
+                        ) || ""
+                      }
                       alt={result.title}
                       fill
                       className="object-cover"
@@ -103,7 +117,9 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
                       {result.title}
                     </h3>
                     <Badge
-                      className={`${getTypeColor(result.type)} text-primary-foreground text-xs flex items-center gap-1`}
+                      className={`${getTypeColor(
+                        result.type
+                      )} text-primary-foreground text-xs flex items-center gap-1`}
                     >
                       {getTypeIcon(result.type)}
                       {result.type}
@@ -125,7 +141,11 @@ export function SearchResults({ results, isLoading, query }: SearchResultsProps)
                     )}
                   </div>
 
-                  {result.overview && <p className="text-muted-foreground text-sm line-clamp-2">{result.overview}</p>}
+                  {result.overview && (
+                    <p className="text-muted-foreground text-sm line-clamp-2">
+                      {result.overview}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>

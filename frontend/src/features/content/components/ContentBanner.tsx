@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 
 import { getTMDBImageUrl } from "@/lib/api";
-import { FeaturedContent } from "@/types/content";
+import { ContentItem } from "../types";
 import { Play, Plus, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
-interface HeroBannerProps {
+interface BannerProps {
   autoPlay?: boolean;
   showControls?: boolean;
   featuredContent: any[];
@@ -19,7 +19,7 @@ interface HeroBannerProps {
   error: string | null;
 }
 
-export function HeroBanner({
+export function ContentBanner({
   autoPlay = true,
   showControls = true,
   featuredContent,
@@ -27,12 +27,15 @@ export function HeroBanner({
   topSeries,
   loading,
   error,
-}: HeroBannerProps) {
+}: BannerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(autoPlay);
 
   // Combine movies and series for rotation - use passed props
-  const movieContent = featuredContent.map((item) => ({ ...item, type: "movie" }));
+  const movieContent = featuredContent.map((item) => ({
+    ...item,
+    type: "movie",
+  }));
   const seriesContent = topSeries ? [{ ...topSeries, type: "series" }] : [];
   const allContent = [...movieContent, ...seriesContent];
 
@@ -53,8 +56,12 @@ export function HeroBanner({
   };
 
   // Standardize description length
-  const truncateDescription = (description: string | undefined, maxLength: number = 200) => {
-    if (!description || description.length <= maxLength) return description || "";
+  const truncateDescription = (
+    description: string | undefined,
+    maxLength: number = 200
+  ) => {
+    if (!description || description.length <= maxLength)
+      return description || "";
     return description.substring(0, maxLength).trim() + "...";
   };
 
@@ -86,7 +93,9 @@ export function HeroBanner({
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
           <div className="max-w-4xl">
-            <div className="text-destructive mb-4">Unable to load featured content</div>
+            <div className="text-destructive mb-4">
+              Unable to load featured content
+            </div>
           </div>
         </div>
       </section>
@@ -94,15 +103,26 @@ export function HeroBanner({
   }
 
   const currentContent = allContent[currentIndex];
-  const backdropUrl = getTMDBImageUrl(currentContent.backdrop_path || null, "backdrop", "large");
-  const href = currentContent.type === "movie" ? `/movies/${currentContent.id}` : `/series/${currentContent.id}`;
+  const backdropUrl = getTMDBImageUrl(
+    currentContent.backdrop_path || null,
+    "backdrop",
+    "large"
+  );
+  const href =
+    currentContent.type === "movie"
+      ? `/movies/${currentContent.id}`
+      : `/series/${currentContent.id}`;
 
   return (
     <section className="relative w-full h-screen overflow-hidden -mt-16">
       {/* Backdrop Image */}
       <div className="absolute inset-0">
         {backdropUrl ? (
-          <img src={backdropUrl} alt={currentContent.title} className="w-full h-full object-cover" />
+          <img
+            src={backdropUrl}
+            alt={currentContent.title}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
         )}
@@ -117,17 +137,22 @@ export function HeroBanner({
         <div className="max-w-4xl">
           <div key={currentContent.id} className="space-y-4">
             {/* Title */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4">{currentContent.title}</h1>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4">
+              {currentContent.title}
+            </h1>
 
             {/* Rating Badge */}
             <div className="flex items-center gap-4 mb-4">
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                <span className="text-white font-semibold">{currentContent.rating?.toFixed(1)}</span>
+                <span className="text-white font-semibold">
+                  {currentContent.rating?.toFixed(1)}
+                </span>
               </div>
               <Badge variant="destructive">TOP 10</Badge>
               <span className="text-white/80 text-sm">
-                #{currentIndex + 1} in {currentContent.type === "movie" ? "Movies" : "TV Shows"} Today
+                #{currentIndex + 1} in{" "}
+                {currentContent.type === "movie" ? "Movies" : "TV Shows"} Today
               </span>
             </div>
 
@@ -161,7 +186,9 @@ export function HeroBanner({
               key={index}
               onClick={() => handleIndexChange(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
+                index === currentIndex
+                  ? "bg-white scale-125"
+                  : "bg-white/50 hover:bg-white/75"
               }`}
             />
           ))}

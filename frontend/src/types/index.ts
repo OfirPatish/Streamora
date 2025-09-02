@@ -10,8 +10,5 @@ export * from "./api";
 // Content types (shared across features)
 export type { FeaturedContent, ContentItem } from "./content";
 
-// Search types (shared across features)
-export * from "./search";
-
 // UI types (shared across features)
 export * from "./ui";

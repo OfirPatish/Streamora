@@ -13,17 +13,18 @@ export {
   ContentGrid,
   ContentCarousel,
   VideoModal,
-  DetailBanner,
-  DetailCast,
-  DetailInfo,
-  DetailProduction,
   PaginatedContentSection,
   MoviesContent,
   SeriesContent,
 } from "./shared";
 
 // UI components
-export { Skeleton, ContentCardSkeleton, DetailPageSkeleton, SearchResultSkeleton } from "./ui/skeletons/Skeleton";
+export {
+  Skeleton,
+  ContentCardSkeleton,
+  DetailPageSkeleton,
+  SearchResultSkeleton,
+} from "./ui/skeletons/Skeleton";
 
 // Provider components
 export { QueryProvider } from "./providers/QueryProvider";

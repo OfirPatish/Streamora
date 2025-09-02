@@ -4,9 +4,9 @@ import { useState, useRef, useEffect } from "react";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FeaturedCard } from "./FeaturedCard";
+import { MediaCard } from "./MediaCard";
 
-interface FeaturedCarouselProps {
+interface CarouselProps {
   title: string;
   items: Array<{
     id: number;
@@ -24,7 +24,12 @@ interface FeaturedCarouselProps {
   error?: string | null;
 }
 
-export function FeaturedCarousel({ title, items, loading = false, error }: FeaturedCarouselProps) {
+export function ContentCarousel({
+  title,
+  items,
+  loading = false,
+  error,
+}: CarouselProps) {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -68,7 +73,10 @@ export function FeaturedCarousel({ title, items, loading = false, error }: Featu
           <div className="h-6 w-48 bg-muted/50 rounded mb-4 animate-pulse" />
           <div className="flex gap-4 overflow-hidden">
             {Array.from({ length: 6 }, (_, i) => (
-              <div key={i} className="flex-shrink-0 w-48 aspect-[2/3] bg-muted/50 rounded-lg animate-pulse" />
+              <div
+                key={i}
+                className="flex-shrink-0 w-48 aspect-[2/3] bg-muted/50 rounded-lg animate-pulse"
+              />
             ))}
           </div>
         </div>
@@ -147,7 +155,7 @@ export function FeaturedCarousel({ title, items, loading = false, error }: Featu
           >
             {items.map((item, index) => (
               <div key={item.id} className="flex-shrink-0 w-48">
-                <FeaturedCard
+                <MediaCard
                   id={item.id}
                   title={item.title}
                   year={item.year}

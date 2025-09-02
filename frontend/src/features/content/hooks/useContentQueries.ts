@@ -32,7 +32,7 @@ async function fetchPopularSeries() {
 }
 
 // Hero section hook
-export function useFeaturedContent() {
+export function useContentHero() {
   const popularMovies = useQuery({
     queryKey: ["hero", "popular-movies"],
     queryFn: fetchPopularMovies,

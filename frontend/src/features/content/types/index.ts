@@ -1,8 +1,8 @@
 // ============================================================================
-// HOME FEATURE TYPES
+// CONTENT FEATURE TYPES
 // ============================================================================
 
-export interface FeaturedCardProps {
+export interface MediaCardProps {
   id: number;
   title: string;
   year: string;
@@ -14,24 +14,58 @@ export interface FeaturedCardProps {
   posterPath?: string | null;
   priority?: boolean;
   description?: string;
+  // Display options
+  showViewCount?: boolean;
+  showDuration?: boolean;
+  showReleaseDate?: boolean;
+  showRating?: boolean;
+  showEpisodeCount?: boolean;
+  // Data for display
+  viewCount?: number;
+  duration?: string;
+  releaseDate?: string;
+  episodeCount?: number;
 }
 
-export interface FeaturedContent {
+export interface ContentItem {
   id: number;
   title: string;
-  description: string;
   year: string;
-  genre: string[];
-  rating: number;
-  runtime: string;
+  genre: string;
   type: "movie" | "series";
-  isNew: boolean;
-  isTrending: boolean;
-  backdrop_path?: string | null;
-  poster_path?: string | null;
+  index: number;
+  rating?: number;
+  isNew?: boolean;
+  posterPath?: string | null;
+  // Additional display data
+  viewCount?: number;
+  duration?: string;
+  releaseDate?: string;
+  episodeCount?: number;
 }
 
-export interface HomeContentProps {
+export interface DisplayProps {
+  title?: string;
+  items: ContentItem[];
+  layout?: "grid" | "carousel";
+  showViewAll?: boolean;
+  viewAllUrl?: string;
+  loading?: boolean;
+  error?: string | null;
+  // Display options
+  showViewCount?: boolean;
+  showDuration?: boolean;
+  showReleaseDate?: boolean;
+  showRating?: boolean;
+  showEpisodeCount?: boolean;
+  // Pagination support (for grid layout)
+  enablePagination?: boolean;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+}
+
+export interface GridProps {
   nowPlayingMovies: any[];
   topRatedMovies: any[];
   onTheAirSeries: any[];
@@ -40,7 +74,7 @@ export interface HomeContentProps {
   error: string | null;
 }
 
-export interface HeroBannerProps {
+export interface BannerProps {
   featuredContent: any[];
   topMovie: any | null;
   topSeries: any | null;
@@ -82,3 +116,12 @@ export interface Series {
   original_name: string;
   origin_country: string[];
 }
+
+// Union type for all content feature types
+export type ContentFeatureTypes =
+  | MediaCardProps
+  | ContentItem
+  | GridProps
+  | BannerProps
+  | Movie
+  | Series;

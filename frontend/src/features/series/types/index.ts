@@ -30,17 +30,15 @@ export interface SeriesDetails {
   production_countries: Array<{ iso_3166_1: string; name: string }>;
   spoken_languages: Array<{ iso_639_1: string; name: string }>;
   credits?: {
-    cast: Array<{ id: number; name: string; character: string; profile_path?: string }>;
+    cast: Array<{
+      id: number;
+      name: string;
+      character: string;
+      profile_path?: string;
+    }>;
     crew: Array<{ id: number; name: string; job: string }>;
   };
   videos?: {
     results: Array<{ key: string; name: string; site: string; type: string }>;
   };
-}
-
-export interface Video {
-  key: string;
-  name: string;
-  site: string;
-  type: string;
 }

@@ -1,5 +1,4 @@
-import { SeriesDetail } from "@/features/series";
-import { SeriesDetails } from "@/types/api";
+import { SeriesDetail, SeriesDetails } from "@/features/series";
 
 interface SeriesPageProps {
   params: Promise<{
@@ -10,7 +9,9 @@ interface SeriesPageProps {
 // Server-side data fetching
 async function getSeriesDetails(id: string) {
   try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}/series/${id}`;
+    const apiUrl = `${
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+    }/series/${id}`;
     const response = await fetch(apiUrl, {
       next: { revalidate: 60 * 60 * 24 }, // 24 hours - series details change very slowly
     });
@@ -56,5 +57,12 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   const seriesData = await getSeriesDetails(id);
 
-  return <SeriesDetail id={id} data={seriesData.data} loading={seriesData.loading} error={seriesData.error} />;
+  return (
+    <SeriesDetail
+      id={id}
+      data={seriesData.data}
+      loading={seriesData.loading}
+      error={seriesData.error}
+    />
+  );
 }
