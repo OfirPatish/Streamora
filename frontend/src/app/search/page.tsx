@@ -1,31 +1,41 @@
 "use client";
 
-import { PageTemplate } from "@/components/layout/PageTemplate";
-import { ListingPageWrapper } from "@/components/layout/ListingPageWrapper";
-import { SearchResults, SearchFilters } from "@/features/search";
-import { Typography } from "@/components/ui/typography";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { BrowsePageLayout } from "@/components/layout/BrowsePageLayout";
+import {
+  SearchSuggestions,
+  SearchFilters,
+  SearchResults,
+} from "@/features/search";
 
 export default function SearchPage() {
   return (
-    <PageTemplate>
-      <ListingPageWrapper
-        title="🔍 Search Results"
-        subtitle="Search functionality coming soon - components are ready"
+    <AppLayout>
+      <BrowsePageLayout
+        title="🔍 Search"
+        subtitle="Find your favorite movies and TV series"
         loading={false}
         error={null}
       >
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Search Filters */}
-          <SearchFilters
-            filters={{}}
-            onFiltersChange={() => {}}
-            resultsCount={0}
-          />
+        <div className="space-y-8">
+          {/* Search Input and Filters */}
+          <div className="space-y-6">
+            <SearchSuggestions
+              recentSearches={[]}
+              onSelect={() => {}}
+              isVisible={false}
+            />
+            <SearchFilters
+              filters={{}}
+              onFiltersChange={() => {}}
+              resultsCount={0}
+            />
+          </div>
 
           {/* Search Results */}
           <SearchResults results={[]} isLoading={false} query="" />
         </div>
-      </ListingPageWrapper>
-    </PageTemplate>
+      </BrowsePageLayout>
+    </AppLayout>
   );
 }

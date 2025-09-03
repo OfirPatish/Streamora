@@ -3,60 +3,70 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { PaginatedResponse } from "@/lib/api";
 import { getCacheTimes } from "@/lib/constants";
-import { Movie, Series, UseBrowseContentProps } from "../types";
+import { Movie, Series } from "../types/content";
+import { UseBrowseContentProps } from "../types/browse";
 
 // ============================================================================
 // BROWSE CONTENT HOOK
 // ============================================================================
 
-export function useBrowseContent<T = Movie | Series>({
-  endpoint,
-  enabled = true,
-  pageSize = 20,
-}: UseBrowseContentProps) {
+export function useBrowseContent<
+  T extends { id: number | string } = Movie | Series
+>({ endpoint, enabled = true, pageSize = 20 }: UseBrowseContentProps) {
   const queryClient = useQueryClient();
   const { staleTime, gcTime } = getCacheTimes(endpoint);
 
   const queryKey = ["browse-content", endpoint];
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error, refetch } = useInfiniteQuery(
-    {
-      queryKey,
-      queryFn: async ({ pageParam = 1 }) => {
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}${endpoint}?page=${pageParam}`;
-        const response = await fetch(apiUrl);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey,
+    queryFn: async ({ pageParam = 1 }) => {
+      const apiUrl = `${
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+      }${endpoint}?page=${pageParam}`;
+      const response = await fetch(apiUrl);
 
-        // Check if response is JSON
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Unable to load content right now. Please try again later.");
-        }
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(
+          "Unable to load content right now. Please try again later."
+        );
+      }
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!result.success) {
-          throw new Error("Something went wrong. Please refresh the page.");
-        }
+      if (!result.success) {
+        throw new Error("Something went wrong. Please refresh the page.");
+      }
 
-        return result.data as PaginatedResponse<T>;
-      },
-      getNextPageParam: (lastPage: PaginatedResponse<T>, allPages) => {
-        const nextPage = allPages.length + 1;
-        return nextPage <= (lastPage.total_pages || 0) ? nextPage : undefined;
-      },
-      initialPageParam: 1,
-      enabled,
-      staleTime,
-      gcTime,
-    }
-  );
+      return result.data as PaginatedResponse<T>;
+    },
+    getNextPageParam: (lastPage: PaginatedResponse<T>, allPages) => {
+      const nextPage = allPages.length + 1;
+      return nextPage <= (lastPage.total_pages || 0) ? nextPage : undefined;
+    },
+    initialPageParam: 1,
+    enabled,
+    staleTime,
+    gcTime,
+  });
 
   // Flatten all pages into a single array
   const allItems = data?.pages.flatMap((page) => page.results || []) ?? [];
 
   // Remove duplicates based on ID
   const uniqueItems = allItems.filter(
-    (item, index, self) => index === self.findIndex((t) => (t as any).id === (item as any).id)
+    (item, index, self) => index === self.findIndex((t) => t.id === item.id)
   );
 
   const loadMore = () => {
@@ -140,7 +150,9 @@ export function useBrowseAiringTodaySeries() {
 }
 
 // Generic browse content hook
-export function useBrowseContentByEndpoint<T = Movie | Series>(endpoint: string) {
+export function useBrowseContentByEndpoint<
+  T extends { id: number | string } = Movie | Series
+>(endpoint: string) {
   return useBrowseContent<T>({
     endpoint,
   });

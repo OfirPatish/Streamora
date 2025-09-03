@@ -2,10 +2,10 @@
 // CONTENT SERVICE - Unified data fetching for movies and series
 // ============================================================================
 
-import { MovieDetail } from "@/features/movies/types";
-import { SeriesDetail } from "@/features/series/types";
+import { MovieDetails, SeriesDetails } from "@/features/browse/types/content";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
 // Generic response type for paginated content
 interface PaginatedResponse<T> {
@@ -29,28 +29,41 @@ export class ContentService {
   // ============================================================================
 
   // Fetch popular movies with pagination
-  static async getPopularMovies(page: number = 1): Promise<PaginatedResponse<MovieDetail>> {
-    return this.fetchPaginatedContent<MovieDetail>("/movies/popular", page);
+  static async getPopularMovies(
+    page: number = 1
+  ): Promise<PaginatedResponse<MovieDetails>> {
+    return this.fetchPaginatedContent<MovieDetails>("/movies/popular", page);
   }
 
   // Fetch now playing movies
-  static async getNowPlayingMovies(page: number = 1): Promise<PaginatedResponse<MovieDetail>> {
-    return this.fetchPaginatedContent<MovieDetail>("/movies/now-playing", page);
+  static async getNowPlayingMovies(
+    page: number = 1
+  ): Promise<PaginatedResponse<MovieDetails>> {
+    return this.fetchPaginatedContent<MovieDetails>(
+      "/movies/now-playing",
+      page
+    );
   }
 
   // Fetch top rated movies
-  static async getTopRatedMovies(page: number = 1): Promise<PaginatedResponse<MovieDetail>> {
-    return this.fetchPaginatedContent<MovieDetail>("/movies/top-rated", page);
+  static async getTopRatedMovies(
+    page: number = 1
+  ): Promise<PaginatedResponse<MovieDetails>> {
+    return this.fetchPaginatedContent<MovieDetails>("/movies/top-rated", page);
   }
 
   // Fetch upcoming movies
-  static async getUpcomingMovies(page: number = 1): Promise<PaginatedResponse<MovieDetail>> {
-    return this.fetchPaginatedContent<MovieDetail>("/movies/upcoming", page);
+  static async getUpcomingMovies(
+    page: number = 1
+  ): Promise<PaginatedResponse<MovieDetails>> {
+    return this.fetchPaginatedContent<MovieDetails>("/movies/upcoming", page);
   }
 
   // Fetch movie details by ID
-  static async getMovieDetails(id: string): Promise<SingleResponse<MovieDetail>> {
-    return this.fetchSingleContent<MovieDetail>(`/movies/${id}`);
+  static async getMovieDetails(
+    id: string
+  ): Promise<SingleResponse<MovieDetails>> {
+    return this.fetchSingleContent<MovieDetails>(`/movies/${id}`);
   }
 
   // ============================================================================
@@ -58,28 +71,44 @@ export class ContentService {
   // ============================================================================
 
   // Fetch popular series with pagination
-  static async getPopularSeries(page: number = 1): Promise<PaginatedResponse<SeriesDetail>> {
-    return this.fetchPaginatedContent<SeriesDetail>("/series/popular", page);
+  static async getPopularSeries(
+    page: number = 1
+  ): Promise<PaginatedResponse<SeriesDetails>> {
+    return this.fetchPaginatedContent<SeriesDetails>("/series/popular", page);
   }
 
   // Fetch on the air series
-  static async getOnTheAirSeries(page: number = 1): Promise<PaginatedResponse<SeriesDetail>> {
-    return this.fetchPaginatedContent<SeriesDetail>("/series/on-the-air", page);
+  static async getOnTheAirSeries(
+    page: number = 1
+  ): Promise<PaginatedResponse<SeriesDetails>> {
+    return this.fetchPaginatedContent<SeriesDetails>(
+      "/series/on-the-air",
+      page
+    );
   }
 
   // Fetch top rated series
-  static async getTopRatedSeries(page: number = 1): Promise<PaginatedResponse<SeriesDetail>> {
-    return this.fetchPaginatedContent<SeriesDetail>("/series/top-rated", page);
+  static async getTopRatedSeries(
+    page: number = 1
+  ): Promise<PaginatedResponse<SeriesDetails>> {
+    return this.fetchPaginatedContent<SeriesDetails>("/series/top-rated", page);
   }
 
   // Fetch airing today series
-  static async getAiringTodaySeries(page: number = 1): Promise<PaginatedResponse<SeriesDetail>> {
-    return this.fetchPaginatedContent<SeriesDetail>("/series/airing-today", page);
+  static async getAiringTodaySeries(
+    page: number = 1
+  ): Promise<PaginatedResponse<SeriesDetails>> {
+    return this.fetchPaginatedContent<SeriesDetails>(
+      "/series/airing-today",
+      page
+    );
   }
 
   // Fetch series details by ID
-  static async getSeriesDetails(id: string): Promise<SingleResponse<SeriesDetail>> {
-    return this.fetchSingleContent<SeriesDetail>(`/series/${id}`);
+  static async getSeriesDetails(
+    id: string
+  ): Promise<SingleResponse<SeriesDetails>> {
+    return this.fetchSingleContent<SeriesDetails>(`/series/${id}`);
   }
 
   // ============================================================================
@@ -119,13 +148,15 @@ export class ContentService {
         totalResults: 0,
         totalPages: 0,
         success: false,
-        error: `Failed to load ${endpoint.split('/').pop()}`,
+        error: `Failed to load ${endpoint.split("/").pop()}`,
       };
     }
   }
 
   // Generic method for fetching single content item
-  private static async fetchSingleContent<T>(endpoint: string): Promise<SingleResponse<T>> {
+  private static async fetchSingleContent<T>(
+    endpoint: string
+  ): Promise<SingleResponse<T>> {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         next: { revalidate: 60 * 60 * 24 }, // 24 hours - details change slowly
@@ -155,7 +186,7 @@ export class ContentService {
       return {
         data: null,
         success: false,
-        error: `Failed to load ${endpoint.split('/').pop()}`,
+        error: `Failed to load ${endpoint.split("/").pop()}`,
       };
     }
   }

@@ -3,5 +3,5 @@
 // ============================================================================
 
 export { BrowseCarousel } from "./BrowseCarousel";
-export { MediaCard } from "./MediaCard";
 export { HeroBanner } from "./HeroBanner";
+export { BrowsePageContent } from "./BrowsePageContent";

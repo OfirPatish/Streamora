@@ -4,19 +4,19 @@ import { ReactNode } from "react";
 
 import { Loader2 } from "lucide-react";
 
-interface DetailContentWrapperProps {
+interface DetailPageLayoutProps {
   children: ReactNode;
   loading?: boolean;
   error?: string | null;
   className?: string;
 }
 
-export function DetailContentWrapper({
+export function DetailPageLayout({
   children,
   loading = false,
   error = null,
   className = "",
-}: DetailContentWrapperProps) {
+}: DetailPageLayoutProps) {
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
@@ -46,7 +46,7 @@ export function DetailContentWrapper({
   return (
     <div className={`w-full min-h-screen bg-gradient-to-b from-background via-background to-muted/20 ${className}`}>
       {/* Main Content - No hero, no page header, just content */}
-      <div className="max-w-[1400px] mx-auto px-8 py-8">
+      <div className="max-w-[1400px] mx-auto py-8">
         <div>{children}</div>
       </div>
     </div>

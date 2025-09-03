@@ -1,152 +1,145 @@
 "use client";
 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { MediaCard } from "./MediaCard";
-import { Typography } from "@/components/ui/typography";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-
-interface BrowseCarouselProps {
-  title: string;
-  items: Array<{
-    id: number;
-    title: string;
-    year: string;
-    genre: string;
-    type: "movie" | "series";
-    index: number;
-    rating?: number;
-    isNew?: boolean;
-    posterPath?: string | null;
-    description?: string;
-    viewCount?: number;
-    duration?: string;
-    releaseDate?: string;
-    episodeCount?: number;
-  }>;
-  loading?: boolean;
-  error?: string | null;
-  showBadge?: boolean;
-  badgeText?: string;
-  badgeVariant?: "default" | "secondary" | "destructive" | "outline";
-}
+import { Typography } from "@/components/ui/typography";
+import { DisplayContentItem, BrowseCarouselProps } from "../types";
+import { useRouter } from "next/navigation";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export function BrowseCarousel({
   title,
   items,
-  loading = false,
+  loading,
   error,
   showBadge = false,
   badgeText,
   badgeVariant = "default",
 }: BrowseCarouselProps) {
+  const router = useRouter();
+
   if (loading) {
     return (
-      <section className="w-full py-6">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Typography variant="h2" className="text-2xl font-bold">
-              {title}
-            </Typography>
-            {showBadge && badgeText && (
-              <Badge variant={badgeVariant} className="text-xs">
-                {badgeText}
-              </Badge>
-            )}
-          </div>
-          <div className="flex gap-4 overflow-hidden">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div key={i} className="flex-shrink-0 w-48 aspect-[2/3] bg-muted/50 rounded-lg animate-pulse" />
-            ))}
-          </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Typography variant="h3" className="text-foreground">
+            {title}
+          </Typography>
+          {showBadge && badgeText && (
+            <Badge variant={badgeVariant}>{badgeText}</Badge>
+          )}
         </div>
-      </section>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="aspect-[2/3] rounded-lg bg-muted/50 animate-pulse"
+            />
+          ))}
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <section className="w-full py-6">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <Typography variant="h2" className="text-2xl font-bold mb-4">
-            {title}
+      <div className="space-y-4">
+        <Typography variant="h3" className="text-foreground">
+          {title}
+        </Typography>
+        <div className="text-center py-8">
+          <Typography variant="muted" className="text-destructive">
+            {error}
           </Typography>
-          <div className="text-center py-8 text-muted-foreground">
-            <p>Failed to load content</p>
-            <p className="text-sm">{error}</p>
-          </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (!items || items.length === 0) {
     return (
-      <section className="w-full py-6">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <Typography variant="h2" className="text-2xl font-bold mb-4">
-            {title}
-          </Typography>
-          <div className="text-center py-8 text-muted-foreground">
-            <p>No content available</p>
-          </div>
+      <div className="space-y-4">
+        <Typography variant="h3" className="text-foreground">
+          {title}
+        </Typography>
+        <div className="text-center py-8">
+          <Typography variant="muted">No content available</Typography>
         </div>
-      </section>
+      </div>
     );
   }
 
-  return (
-    <section className="w-full py-6">
-      <div className="px-4 sm:px-6 lg:px-8">
-        {/* Title with optional badge */}
-        <div className="flex items-center gap-3 mb-6">
-          <Typography variant="h2" className="text-2xl font-bold">
-            {title}
-          </Typography>
-          {showBadge && badgeText && (
-            <Badge variant={badgeVariant} className="text-xs">
-              {badgeText}
-            </Badge>
-          )}
-        </div>
+  const handleItemClick = (item: DisplayContentItem) => {
+    const contentType = item.displayType || (item.title ? "movie" : "series");
+    const itemId = item.id;
 
-        {/* Carousel - Show exactly 5 items initially, but allow scrolling through all */}
-        <Carousel
-          opts={{
-            align: "start",
-            loop: false,
-            slidesToScroll: 1,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-2 md:-ml-4">
-            {items.map((item, index) => (
-              <CarouselItem key={item.id} className="pl-2 md:pl-4 basis-1/5 min-w-[200px] max-w-[200px]">
-                <div className="w-full">
-                  <MediaCard
-                    id={item.id}
-                    title={item.title}
-                    year={item.year}
-                    genre={item.genre}
-                    type={item.type}
-                    index={item.index}
-                    rating={item.rating}
-                    isNew={item.isNew}
-                    posterPath={item.posterPath}
-                    description={item.description}
-                    priority={index === 0}
-                    viewCount={item.viewCount}
-                    duration={item.duration}
-                    releaseDate={item.releaseDate}
-                    episodeCount={item.episodeCount}
-                  />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="left-2 bg-black/60 border-white/20 text-white hover:bg-black/80 backdrop-blur-sm" />
-          <CarouselNext className="right-2 bg-black/60 border-white/20 text-white hover:bg-black/80 backdrop-blur-sm" />
-        </Carousel>
+    if (contentType === "movie") {
+      router.push(`/movies/${itemId}`);
+    } else {
+      router.push(`/series/${itemId}`);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <Typography variant="h3" className="text-foreground">
+          {title}
+        </Typography>
+        {showBadge && badgeText && (
+          <Badge variant={badgeVariant}>{badgeText}</Badge>
+        )}
       </div>
-    </section>
+
+      {/* Shadcn Carousel with proper responsive sizing */}
+      <Carousel
+        opts={{
+          align: "start",
+        }}
+        className="w-full"
+      >
+        <CarouselContent className="-ml-2 md:-ml-4">
+          {items.map((item) => (
+            <CarouselItem
+              key={item.id}
+              className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
+            >
+              <div className="p-1">
+                <div
+                  className="group cursor-pointer border-2 border-transparent hover:border-primary transition-colors duration-200 rounded-lg"
+                  onClick={() => handleItemClick(item)}
+                >
+                  {/* Poster */}
+                  <div className="aspect-[2/3] rounded-lg overflow-hidden bg-muted/50">
+                    {item.poster_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                        alt={item.title || item.name || "Content"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted/50 flex items-center justify-center">
+                        <span className="text-muted-foreground text-sm">
+                          {item.displayType === "movie" ? "Movie" : "TV"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
   );
 }

@@ -14,5 +14,4 @@ export {
   useBrowseAiringTodaySeries,
   useBrowseContentByEndpoint,
 } from "./useBrowseContent";
-
-export { usePreloadedContent } from "./usePreloadedContent";
+export { useBrowsePage } from "./useBrowsePage";

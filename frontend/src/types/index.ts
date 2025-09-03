@@ -1,14 +1,12 @@
 // ============================================================================
-// GLOBAL TYPES INDEX
+// ROOT TYPES - BARREL EXPORTS FOR THE ENTIRE APPLICATION
 // ============================================================================
-// This file exports shared/global types that are used across multiple features
-// Feature-specific types are now co-located with their features
 
-// API response types (shared across all features)
+// API types
 export * from "./api";
 
-// Content types (shared across features)
-export type { FeaturedContent, ContentItem } from "./content";
+// Content types (re-exported from browse feature)
+export * from "@/features/browse/types/content";
 
-// UI types (shared across features)
-export * from "./ui";
+// Browse feature types
+export * from "@/features/browse/types/browse";

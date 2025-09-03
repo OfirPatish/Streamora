@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 
 import { Loader2 } from "lucide-react";
 
-interface ListingPageWrapperProps {
+interface BrowsePageLayoutProps {
   children: ReactNode;
   title?: string;
   subtitle?: string;
@@ -15,7 +15,7 @@ interface ListingPageWrapperProps {
   heroContent?: ReactNode;
 }
 
-export function ListingPageWrapper({
+export function BrowsePageLayout({
   children,
   title,
   subtitle,
@@ -24,7 +24,7 @@ export function ListingPageWrapper({
   className = "",
   showHero = false,
   heroContent,
-}: ListingPageWrapperProps) {
+}: BrowsePageLayoutProps) {
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
@@ -52,7 +52,9 @@ export function ListingPageWrapper({
   }
 
   return (
-    <div className={`w-full min-h-screen bg-gradient-to-b from-background via-background to-muted/20 ${className}`}>
+    <div
+      className={`w-full min-h-screen bg-gradient-to-b from-background via-background to-muted/20 ${className}`}
+    >
       {/* Hero Section (optional) */}
       {showHero && heroContent && (
         <div className="relative w-full h-[40vh] min-h-[300px] sm:min-h-[400px] overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-background">
@@ -60,7 +62,9 @@ export function ListingPageWrapper({
           <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-background/80" />
 
           <div className="relative h-full flex items-center justify-center sm:justify-start">
-            <div className="max-w-[1400px] mx-auto px-8 w-full">{heroContent}</div>
+            <div className="max-w-[1400px] mx-auto px-8 w-full">
+              {heroContent}
+            </div>
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
@@ -75,14 +79,18 @@ export function ListingPageWrapper({
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent mb-2 tracking-tight">
                 {title}
               </h1>
-              {subtitle && <p className="text-lg sm:text-xl text-muted-foreground font-medium">{subtitle}</p>}
+              {subtitle && (
+                <p className="text-lg sm:text-xl text-muted-foreground font-medium">
+                  {subtitle}
+                </p>
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* Main Content */}
-      <div className="max-w-[1400px] mx-auto px-8 py-8">
+      <div className="max-w-[1400px] mx-auto py-8">
         <div>{children}</div>
       </div>
     </div>
@@ -90,4 +98,4 @@ export function ListingPageWrapper({
 }
 
 // Legacy export for backward compatibility
-export const ContentSection = ListingPageWrapper;
+export const ContentSection = BrowsePageLayout;

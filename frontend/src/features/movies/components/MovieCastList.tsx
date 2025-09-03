@@ -1,11 +1,24 @@
 "use client";
 
 import { getTMDBImageUrl } from "@/lib/api";
-import { CastMember, MovieCastListProps } from "../types";
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
+
+interface CastMember {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  credit_id: string;
+  order: number;
+}
+
+interface MovieCastListProps {
+  cast: CastMember[];
+  maxItems?: number;
+}
 
 export function MovieCastList({ cast, maxItems = 12 }: MovieCastListProps) {
   const displayCast = cast.slice(0, maxItems);

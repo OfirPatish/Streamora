@@ -32,6 +32,11 @@ export interface MovieDetail extends Movie {
   belongs_to_collection?: Collection;
 }
 
+// Props interface for MovieDetailLayout component
+export interface MovieDetailLayoutProps {
+  movie: MovieDetail;
+}
+
 export interface Genre {
   id: number;
   name: string;

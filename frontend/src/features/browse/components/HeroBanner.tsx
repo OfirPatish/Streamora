@@ -1,24 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Play, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { getTMDBImageUrl } from "@/lib/api";
 import Link from "next/link";
-
-interface FeaturedContent {
-  id: number;
-  title: string;
-  overview?: string;
-  description?: string;
-  backdrop_path?: string | null;
-  poster_path?: string | null;
-  type: "movie" | "series";
-}
-
-interface HeroBannerProps {
-  featuredContent: FeaturedContent[];
-}
+import { Button } from "@/components/ui/button";
+import { Play, Plus } from "lucide-react";
+import { getTMDBImageUrl } from "@/lib/api";
+import { HeroBannerProps } from "../types";
 
 export function HeroBanner({ featuredContent }: HeroBannerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -35,21 +22,6 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
     return () => clearInterval(interval);
   }, [isAutoPlaying, featuredContent.length]);
 
-  const handleIndexChange = (index: number) => {
-    setCurrentIndex(index);
-    setIsAutoPlaying(false);
-  };
-
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + featuredContent.length) % featuredContent.length);
-    setIsAutoPlaying(false);
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % featuredContent.length);
-    setIsAutoPlaying(false);
-  };
-
   if (!featuredContent.length) return null;
 
   const currentContent = featuredContent[currentIndex];
@@ -58,11 +30,18 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
     "backdrop",
     "original"
   );
-  const href = currentContent.type === "movie" ? `/movies/${currentContent.id}` : `/series/${currentContent.id}`;
+  const href =
+    currentContent.displayType === "movie"
+      ? `/movies/${currentContent.id}`
+      : `/series/${currentContent.id}`;
 
   // Truncate description for better display
-  const truncateDescription = (description: string | undefined, maxLength: number = 200) => {
-    if (!description || description.length <= maxLength) return description || "";
+  const truncateDescription = (
+    description: string | undefined,
+    maxLength: number = 200
+  ) => {
+    if (!description || description.length <= maxLength)
+      return description || "";
     return description.substring(0, maxLength).trim() + "...";
   };
 
@@ -71,7 +50,16 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
       {/* Backdrop Image */}
       <div className="absolute inset-0">
         {backdropUrl ? (
-          <img src={backdropUrl} alt={currentContent.title} className="w-full h-full object-cover" />
+          <img
+            src={backdropUrl}
+            alt={
+              currentContent.displayTitle ||
+              currentContent.title ||
+              currentContent.name ||
+              "Content"
+            }
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
         )}
@@ -85,11 +73,15 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
         <div className="max-w-4xl">
           <div className="space-y-4">
             {/* Title */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4">{currentContent.title}</h1>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4">
+              {currentContent.displayTitle ||
+                currentContent.title ||
+                currentContent.name}
+            </h1>
 
             {/* Synopsis */}
             <p className="text-white/90 text-lg md:text-xl max-w-2xl leading-relaxed mb-6">
-              {truncateDescription(currentContent.overview || currentContent.description)}
+              {truncateDescription(currentContent.overview)}
             </p>
 
             {/* Action Buttons */}
@@ -98,63 +90,40 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
                 <Button
                   size="lg"
                   variant="default"
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 h-14"
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold"
                 >
-                  <Play className="h-5 w-5 mr-2 fill-current" />
+                  <Play className="w-5 h-5 mr-2 fill-white" />
                   Play Now
                 </Button>
               </Link>
 
-              {/* Add to Watchlist Button */}
               <Button
+                size="lg"
                 variant="outline"
-                size="icon"
-                className="h-14 w-14 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
+                className="border-white/30 text-white hover:bg-white/10"
               >
-                <Plus className="h-6 w-6" />
+                <Plus className="w-5 h-5 mr-2" />
+                Add to List
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Navigation Controls */}
-      {featuredContent.length > 1 && (
-        <>
-          {/* Left Arrow */}
+      {/* Pagination Dots */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+        {featuredContent.map((_, index) => (
           <button
-            onClick={handlePrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 transition-opacity duration-300 hover:opacity-100"
-          >
-            <div className="h-12 w-12 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80 backdrop-blur-sm shadow-lg flex items-center justify-center">
-              <ChevronLeft className="h-6 w-6" />
-            </div>
-          </button>
-
-          {/* Right Arrow */}
-          <button
-            onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 transition-opacity duration-300 hover:opacity-100"
-          >
-            <div className="h-12 w-12 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80 backdrop-blur-sm shadow-lg flex items-center justify-center">
-              <ChevronRight className="h-6 w-6" />
-            </div>
-          </button>
-
-          {/* Carousel Indicators */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-            {featuredContent.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => handleIndexChange(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? "bg-red-600 scale-125" : "bg-white/50 hover:bg-white/75"
-                }`}
-              />
-            ))}
-          </div>
-        </>
-      )}
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              index === currentIndex
+                ? "bg-red-500 w-8"
+                : "bg-white/50 hover:bg-white/70"
+            }`}
+          />
+        ))}
+      </div>
     </section>
   );
 }

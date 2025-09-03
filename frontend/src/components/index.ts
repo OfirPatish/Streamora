@@ -1,19 +1,13 @@
 // Main components index - export all components
 
 // Layout components
-export { DesktopHeader } from "./layout/DesktopHeader";
-export { MobileHeader } from "./layout/MobileHeader";
-export { MobileBottomNav } from "./layout/MobileBottomNav";
-export { PageTemplate } from "./layout/PageTemplate";
-export { ContentSection } from "./layout/ListingPageWrapper";
+export { MainHeader } from "./layout/MainHeader";
+export { AppLayout } from "./layout/AppLayout";
+export { BrowsePageLayout } from "./layout/BrowsePageLayout";
+export { DetailPageLayout } from "./layout/DetailPageLayout";
 
 // Shared components
-export {
-  ContentCard,
-  ContentGrid,
-  ContentCarousel,
-  VideoModal,
-} from "./shared";
+export { VideoModal, ListingPageLayout } from "./shared";
 
 // UI components
 export {

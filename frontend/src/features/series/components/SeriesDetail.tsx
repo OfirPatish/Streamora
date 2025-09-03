@@ -1,49 +1,85 @@
 "use client";
 
-import { SeriesDetailProps } from "../types";
-import { PageTemplate } from "@/components/layout/PageTemplate";
-import { DetailContentWrapper } from "@/components/layout/DetailContentWrapper";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { DetailPageLayout } from "@/components/layout/DetailPageLayout";
+import { SeriesDetails } from "@/features/browse/types/content";
 
-// ============================================================================
-// SERIES DETAIL COMPONENT - TEMPORARY PLACEHOLDER
-// ============================================================================
-// TODO: Replace this with proper series layout copied from movies layout
-// The old shared components were removed to separate movies and series
+interface SeriesDetailProps {
+  id: string;
+  data: SeriesDetails;
+  loading: boolean;
+  error: string | null;
+}
 
 export function SeriesDetail({ id, data, loading, error }: SeriesDetailProps) {
-  // Error state
-  if (error || !data) {
+  if (loading) {
     return (
-      <PageTemplate>
-        <DetailContentWrapper error="Failed to load TV show details">
+      <AppLayout>
+        <DetailPageLayout loading={true}>
           <div className="text-center py-16">
-            <div className="text-destructive mb-4 text-lg font-medium">
-              Failed to load TV show details
-            </div>
-            <div className="text-muted-foreground">Series ID: {id}</div>
+            <p className="text-muted-foreground">Loading TV show details...</p>
           </div>
-        </DetailContentWrapper>
-      </PageTemplate>
+        </DetailPageLayout>
+      </AppLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AppLayout>
+        <DetailPageLayout error="Failed to load TV show details">
+          <div className="text-center py-16">
+            <p className="text-destructive">Error: {error}</p>
+          </div>
+        </DetailPageLayout>
+      </AppLayout>
     );
   }
 
   return (
-    <PageTemplate>
-      <DetailContentWrapper>
-        <div className="text-center py-16">
-          <div className="text-foreground mb-4 text-lg font-medium">
-            Series Detail Layout Coming Soon
+    <AppLayout>
+      <DetailPageLayout>
+        <div className="space-y-8">
+          {/* Series Header */}
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">{data.name}</h1>
+            {data.overview && (
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+                {data.overview}
+              </p>
+            )}
           </div>
-          <div className="text-muted-foreground">
-            This will be replaced with the proper series layout copied from
-            movies
+
+          {/* Series Details */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-primary">
+                {data.vote_average}
+              </div>
+              <div className="text-sm text-muted-foreground">Rating</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-primary">
+                {data.vote_count}
+              </div>
+              <div className="text-sm text-muted-foreground">Votes</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-primary">
+                {data.popularity}
+              </div>
+              <div className="text-sm text-muted-foreground">Popularity</div>
+            </div>
           </div>
-          <div className="mt-4 p-4 bg-muted/20 rounded-lg border border-border/50">
-            <h1 className="text-2xl font-bold mb-2">{data.name}</h1>
-            <p className="text-muted-foreground">{data.overview}</p>
+
+          {/* Additional Info */}
+          <div className="text-center text-muted-foreground">
+            <p>Series ID: {id}</p>
+            <p>Release Date: {data.first_air_date}</p>
+            <p>Language: {data.original_language}</p>
           </div>
         </div>
-      </DetailContentWrapper>
-    </PageTemplate>
+      </DetailPageLayout>
+    </AppLayout>
   );
 }

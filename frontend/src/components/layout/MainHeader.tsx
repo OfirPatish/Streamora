@@ -16,7 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-export function DesktopHeader() {
+export function MainHeader() {
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
 
@@ -42,7 +42,10 @@ export function DesktopHeader() {
                 >
                   <Link
                     href="/"
-                    className={cn("text-white/80 hover:text-white transition-colors", pathname === "/" && "text-white")}
+                    className={cn(
+                      "text-white/80 hover:text-white transition-colors",
+                      pathname === "/" && "text-white"
+                    )}
                   >
                     Home
                   </Link>
@@ -53,7 +56,7 @@ export function DesktopHeader() {
               <NavigationMenuItem>
                 <NavigationMenuLink
                   asChild
-                  className="group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-transparent focus:bg-transparent focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-transparent data-[state=open]:bg-transparent"
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-transparent focus:bg-transparent focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-transparent"
                 >
                   <Link
                     href="/browse"
@@ -100,23 +103,33 @@ export function DesktopHeader() {
               placeholder="Search movies, shows..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-black/20 border-white/20 text-white placeholder-white/60 focus:border-white/40 backdrop-blur-sm"
+              className="w-full pl-10 pr-4 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20 focus:border-white/40"
             />
           </div>
         </div>
 
-        {/* Action Buttons - Right */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Profile Avatar */}
+        {/* Notifications */}
+        <div className="flex-shrink-0">
           <Button
             variant="ghost"
             size="icon"
-            className="p-0 h-auto w-auto text-white/80 hover:text-white hover:bg-white/10"
+            className="h-10 w-10 text-white/80 hover:text-white hover:bg-white/10"
+          >
+            <Bell className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* User Profile */}
+        <div className="flex-shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 text-white/80 hover:text-white hover:bg-white/10"
           >
             <Avatar className="h-8 w-8">
-              <AvatarImage src="https://github.com/shadcn.png" alt="Profile" />
-              <AvatarFallback>
-                <User className="h-4 w-4" />
+              <AvatarImage src="/avatars/user.jpg" alt="User" />
+              <AvatarFallback className="bg-white/20 text-white text-sm font-medium">
+                U
               </AvatarFallback>
             </Avatar>
           </Button>

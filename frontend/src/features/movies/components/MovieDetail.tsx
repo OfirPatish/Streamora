@@ -1,132 +1,127 @@
 "use client";
 
 import { useState } from "react";
-import { MovieDetails, MovieDetailProps } from "../types";
-import { VideoModal } from "@/components/shared";
-import { PageTemplate } from "@/components/layout/PageTemplate";
-import { DetailContentWrapper } from "@/components/layout/DetailContentWrapper";
-import { useMovieDetails } from "../hooks/useMovieDetails";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { DetailPageLayout } from "@/components/layout/DetailPageLayout";
 import { MovieDetailLayout } from "./MovieDetailLayout";
 import { MovieCastList } from "./MovieCastList";
+import type { MovieDetails } from "@/features/browse/types/content";
 
-// ============================================================================
-// MOVIE DETAIL COMPONENT
-// ============================================================================
+interface MovieDetailProps {
+  id: string;
+  data: MovieDetails;
+  loading: boolean;
+  error: string | null;
+}
 
 export function MovieDetail({ id, data, loading, error }: MovieDetailProps) {
-  const [selectedVideo, setSelectedVideo] = useState<{
-    key: string;
-    name: string;
-  } | null>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "cast" | "reviews">(
+    "overview"
+  );
 
-  // Use the hook for refetch functionality
-  const { refetch, isRefetching } = useMovieDetails(Number(id));
-
-  // Error state
-  if (error || !data) {
+  if (loading) {
     return (
-      <PageTemplate>
-        <DetailContentWrapper error="Failed to load movie details">
+      <AppLayout>
+        <DetailPageLayout loading={true}>
           <div className="text-center py-16">
-            <div className="text-destructive mb-4 text-lg font-medium">
-              Failed to load movie details
-            </div>
-            <div className="text-muted-foreground">Movie ID: {id}</div>
+            <p className="text-muted-foreground">Loading movie details...</p>
           </div>
-        </DetailContentWrapper>
-      </PageTemplate>
+        </DetailPageLayout>
+      </AppLayout>
     );
   }
 
-  // Extract movie properties
-  const movie = data;
-  const title = movie.title;
-  const overview = movie.overview;
-  const backdropPath = movie.backdrop_path;
-  const videos = movie.videos?.results || [];
-  const cast = movie.credits?.cast || [];
-
-  // Handle video selection
-  const handleVideoSelect = (video: {
-    key: string;
-    name: string;
-    type: string;
-    site: string;
-  }) => {
-    setSelectedVideo({ key: video.key, name: video.name });
-  };
-
-  // Handle watchlist add
-  const handleWatchlistAdd = () => {
-    // TODO: Implement watchlist functionality
-    console.log("Add to watchlist:", title);
-  };
-
-  const handleRefetch = () => {
-    refetch();
-  };
-
-  // Extract additional metadata for the new layout
-  const releaseYear = movie.release_date
-    ? new Date(movie.release_date).getFullYear().toString()
-    : undefined;
-  const languages = movie.spoken_languages?.map((lang) => lang.name) || [];
-  const imdbRating = movie.vote_average;
-  const streamoraRating = movie.vote_average; // Using same rating for now
-  const genres = movie.genres || [];
-
-  // Extract director and music from credits
-  const director = movie.credits?.crew?.find((crew) => crew.job === "Director");
-  const music = movie.credits?.crew?.find((crew) => crew.job === "Music");
+  if (error) {
+    return (
+      <AppLayout>
+        <DetailPageLayout error="Failed to load movie details">
+          <div className="text-center py-16">
+            <p className="text-destructive">Error: {error}</p>
+          </div>
+        </DetailPageLayout>
+      </AppLayout>
+    );
+  }
 
   return (
-    <PageTemplate>
-      <DetailContentWrapper>
-        <MovieDetailLayout
-          title={title}
-          overview={overview}
-          backdropPath={backdropPath}
-          videos={videos}
-          onVideoSelect={handleVideoSelect}
-          onWatchlistAdd={handleWatchlistAdd}
-          releaseYear={releaseYear}
-          languages={languages}
-          imdbRating={imdbRating}
-          streamoraRating={streamoraRating}
-          genres={genres}
-          director={
-            director
-              ? {
-                  name: director.name,
-                  origin: "Unknown", // TMDB crew data doesn't include origin_country
-                  profilePath: director.profile_path,
-                }
-              : undefined
-          }
-          music={
-            music
-              ? {
-                  name: music.name,
-                  origin: "Unknown", // TMDB crew data doesn't include origin_country
-                  profilePath: music.profile_path,
-                }
-              : undefined
-          }
-        >
-          {/* Cast Section */}
-          <MovieCastList cast={cast} maxItems={12} />
-        </MovieDetailLayout>
+    <AppLayout>
+      <DetailPageLayout>
+        <MovieDetailLayout movie={data} />
+      </DetailPageLayout>
 
-        {/* Video Modal */}
-        {selectedVideo && (
-          <VideoModal
-            isOpen={!!selectedVideo}
-            videoKey={selectedVideo.key}
-            videoName={selectedVideo.name}
-            onClose={() => setSelectedVideo(null)}
-          />
-        )}
-      </DetailContentWrapper>
-    </PageTemplate>
+      <DetailPageLayout>
+        <div className="space-y-8">
+          {/* Tab Navigation */}
+          <div className="flex space-x-1 border-b border-border">
+            {[
+              { key: "overview", label: "Overview" },
+              { key: "cast", label: "Cast & Crew" },
+              { key: "reviews", label: "Reviews" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key as any)}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? "text-primary border-b-2 border-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div className="min-h-[400px]">
+            {activeTab === "overview" && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Synopsis</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {data.overview}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Details</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">
+                        Release Date:
+                      </span>
+                      <p className="font-medium">{data.release_date}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Runtime:</span>
+                      <p className="font-medium">{data.runtime} min</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Rating:</span>
+                      <p className="font-medium">{data.vote_average}/10</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Genre:</span>
+                      <p className="font-medium">
+                        {data.genres?.map((g) => g.name).join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "cast" && (
+              <MovieCastList cast={data.credits?.cast || []} maxItems={12} />
+            )}
+
+            {activeTab === "reviews" && (
+              <div className="text-center py-16 text-muted-foreground">
+                <p>Reviews coming soon...</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </DetailPageLayout>
+    </AppLayout>
   );
 }

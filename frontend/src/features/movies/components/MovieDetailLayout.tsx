@@ -13,33 +13,21 @@ import {
   Star,
 } from "lucide-react";
 import { getTMDBImageUrl } from "@/lib/api";
-import { MovieDetailLayoutProps } from "../types";
+import { MovieDetails } from "@/features/browse/types/content";
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
-export function MovieDetailLayout({
-  title,
-  overview,
-  backdropPath,
-  videos,
-  onVideoSelect,
-  onWatchlistAdd,
-  children,
-  releaseYear,
-  languages = [],
-  selectedLanguage,
-  onLanguageSelect,
-  imdbRating,
-  streamoraRating,
-  genres = [],
-  director,
-  music,
-}: MovieDetailLayoutProps) {
-  const hasVideos = videos && videos.length > 0;
-  const bannerUrl = backdropPath
-    ? getTMDBImageUrl(backdropPath, "backdrop", "original")
+interface MovieDetailLayoutProps {
+  movie: MovieDetails;
+}
+
+export function MovieDetailLayout({ movie }: MovieDetailLayoutProps) {
+  const hasVideos =
+    movie.videos && movie.videos.results && movie.videos.results.length > 0;
+  const bannerUrl = movie.backdrop_path
+    ? getTMDBImageUrl(movie.backdrop_path, "backdrop", "original")
     : undefined;
 
   return (
@@ -51,7 +39,7 @@ export function MovieDetailLayout({
           <div className="absolute inset-0">
             <img
               src={bannerUrl}
-              alt={title}
+              alt={movie.title}
               className="w-full h-full object-cover"
             />
             {/* Gradient overlay */}
@@ -65,23 +53,22 @@ export function MovieDetailLayout({
             <div className="max-w-4xl">
               {/* Title */}
               <h1 className="text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">
-                {title}
+                {movie.title}
               </h1>
 
               {/* Tagline/Overview */}
-              {overview && (
+              {movie.overview && (
                 <p className="text-lg lg:text-xl text-white/90 mb-8 max-w-3xl leading-relaxed drop-shadow-lg">
-                  {overview}
+                  {movie.overview}
                 </p>
               )}
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-4">
-                {hasVideos && onVideoSelect && (
+                {hasVideos && (
                   <Button
                     size="lg"
                     className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200 rounded-lg"
-                    onClick={() => onVideoSelect(videos[0])}
                   >
                     <Play className="w-6 h-6 mr-3 fill-current" />
                     Play Now
@@ -92,7 +79,6 @@ export function MovieDetailLayout({
                   variant="outline"
                   size="lg"
                   className="border-2 border-white/30 hover:border-white/50 hover:bg-white/10 text-white px-6 py-4 text-lg font-medium transition-all duration-200 rounded-lg"
-                  onClick={onWatchlistAdd}
                 >
                   <Plus className="w-6 h-6" />
                 </Button>
@@ -131,9 +117,9 @@ export function MovieDetailLayout({
                 <h2 className="text-xl font-semibold text-foreground mb-4">
                   Description
                 </h2>
-                {overview && (
+                {movie.overview && (
                   <p className="text-foreground/80 leading-relaxed">
-                    {overview}
+                    {movie.overview}
                   </p>
                 )}
               </section>
@@ -154,8 +140,10 @@ export function MovieDetailLayout({
                   </div>
                 </div>
                 <div className="flex gap-4 overflow-x-auto pb-4">
-                  {/* Cast members will be rendered here by children */}
-                  {children}
+                  {/* Cast members will be rendered here by the parent component */}
+                  <p className="text-muted-foreground">
+                    Cast information will be displayed in the tabs below.
+                  </p>
                 </div>
               </section>
 
@@ -250,37 +238,31 @@ export function MovieDetailLayout({
             {/* Right Column - Metadata Sidebar */}
             <div className="space-y-6">
               {/* Released Year */}
-              {releaseYear && (
+              {movie.release_date && (
                 <section className="bg-muted/20 rounded-xl border border-border/50 p-6">
                   <h3 className="text-lg font-semibold text-foreground mb-3">
                     Released Year
                   </h3>
-                  <p className="text-foreground/80">{releaseYear}</p>
+                  <p className="text-foreground/80">
+                    {new Date(movie.release_date).getFullYear()}
+                  </p>
                 </section>
               )}
 
               {/* Available Languages */}
-              {languages.length > 0 && (
+              {movie.spoken_languages && movie.spoken_languages.length > 0 && (
                 <section className="bg-muted/20 rounded-xl border border-border/50 p-6">
                   <h3 className="text-lg font-semibold text-foreground mb-3">
                     Available Languages
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {languages.map((language) => (
+                    {movie.spoken_languages.map((language) => (
                       <Button
-                        key={language}
-                        variant={
-                          selectedLanguage === language ? "default" : "outline"
-                        }
+                        key={language.iso_639_1}
+                        variant="outline"
                         size="sm"
-                        className={
-                          selectedLanguage === language
-                            ? "bg-red-600 hover:bg-red-700"
-                            : ""
-                        }
-                        onClick={() => onLanguageSelect?.(language)}
                       >
-                        {language}
+                        {language.english_name}
                       </Button>
                     ))}
                   </div>
@@ -288,46 +270,37 @@ export function MovieDetailLayout({
               )}
 
               {/* Ratings */}
-              {(imdbRating || streamoraRating) && (
-                <section className="bg-muted/20 rounded-xl border border-border/50 p-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-3">
-                    Ratings
-                  </h3>
-                  <div className="space-y-3">
-                    {imdbRating && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-foreground/80">IMDb</span>
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm font-medium">
-                            {imdbRating}
-                          </span>
-                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        </div>
-                      </div>
-                    )}
-                    {streamoraRating && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-foreground/80">Streamora</span>
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm font-medium">
-                            {streamoraRating}
-                          </span>
-                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        </div>
-                      </div>
-                    )}
+              <section className="bg-muted/20 rounded-xl border border-border/50 p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
+                  Ratings
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-foreground/80">Rating</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-medium">
+                        {movie.vote_average.toFixed(1)}
+                      </span>
+                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                    </div>
                   </div>
-                </section>
-              )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-foreground/80">Votes</span>
+                    <span className="text-sm font-medium">
+                      {movie.vote_count.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </section>
 
               {/* Genres */}
-              {genres.length > 0 && (
+              {movie.genres && movie.genres.length > 0 && (
                 <section className="bg-muted/20 rounded-xl border border-border/50 p-6">
                   <h3 className="text-lg font-semibold text-foreground mb-3">
                     Genres
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {genres.map((genre) => (
+                    {movie.genres.map((genre) => (
                       <Badge
                         key={genre.id}
                         variant="secondary"
@@ -340,75 +313,13 @@ export function MovieDetailLayout({
                 </section>
               )}
 
-              {/* Director */}
-              {director && (
+              {/* Runtime */}
+              {movie.runtime && (
                 <section className="bg-muted/20 rounded-xl border border-border/50 p-6">
                   <h3 className="text-lg font-semibold text-foreground mb-3">
-                    Director
+                    Runtime
                   </h3>
-                  <div className="flex items-center gap-3">
-                    {director.profilePath ? (
-                      <img
-                        src={
-                          getTMDBImageUrl(
-                            director.profilePath,
-                            "profile",
-                            "small"
-                          ) || ""
-                        }
-                        alt={director.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-semibold text-primary">
-                          {director.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-medium text-sm">{director.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {director.origin}
-                      </p>
-                    </div>
-                  </div>
-                </section>
-              )}
-
-              {/* Music */}
-              {music && (
-                <section className="bg-muted/20 rounded-xl border border-border/50 p-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-3">
-                    Music
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    {music.profilePath ? (
-                      <img
-                        src={
-                          getTMDBImageUrl(
-                            music.profilePath,
-                            "profile",
-                            "small"
-                          ) || ""
-                        }
-                        alt={music.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-semibold text-primary">
-                          {music.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-medium text-sm">{music.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {music.origin}
-                      </p>
-                    </div>
-                  </div>
+                  <p className="text-foreground/80">{movie.runtime} minutes</p>
                 </section>
               )}
             </div>
