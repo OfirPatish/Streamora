@@ -1,5 +1,5 @@
 // ============================================================================
-// CONTENT FEATURE TYPES
+// BROWSE CONTENT DISPLAY TYPES
 // ============================================================================
 
 export interface MediaCardProps {
@@ -64,64 +64,3 @@ export interface DisplayProps {
   hasMore?: boolean;
   loadingMore?: boolean;
 }
-
-export interface GridProps {
-  nowPlayingMovies: any[];
-  topRatedMovies: any[];
-  onTheAirSeries: any[];
-  topRatedSeries: any[];
-  loading: boolean;
-  error: string | null;
-}
-
-export interface BannerProps {
-  featuredContent: any[];
-  topMovie: any | null;
-  topSeries: any | null;
-  loading: boolean;
-  error: string | null;
-}
-
-// Types for data transformation in the home feature
-export interface Movie {
-  id: number;
-  title: string;
-  overview: string;
-  poster_path: string;
-  backdrop_path: string;
-  release_date: string;
-  vote_average: number;
-  vote_count: number;
-  popularity: number;
-  genre_ids: number[];
-  adult: boolean;
-  original_language: string;
-  original_title: string;
-  video: boolean;
-}
-
-export interface Series {
-  id: number;
-  name: string;
-  overview: string;
-  poster_path: string;
-  backdrop_path: string;
-  first_air_date: string;
-  vote_average: number;
-  vote_count: number;
-  popularity: number;
-  genre_ids: number[];
-  adult: boolean;
-  original_language: string;
-  original_name: string;
-  origin_country: string[];
-}
-
-// Union type for all content feature types
-export type ContentFeatureTypes =
-  | MediaCardProps
-  | ContentItem
-  | GridProps
-  | BannerProps
-  | Movie
-  | Series;

@@ -1,14 +1,7 @@
 // Main hooks index - export all hooks
 
-// UI hooks
-export { useIsMobile } from "./ui/useMobile";
-export { useSplitScreen } from "./ui/useSplitScreen";
-export { useInfiniteScroll } from "./ui/useInfiniteScroll";
+// Note: Most hooks have been moved to their respective feature folders
+// This file now only contains hooks that are truly generic/utility hooks
 
-// Generic content hooks
-export { useUnifiedContent, usePaginatedContent } from "./useUnifiedContent";
-export { usePreloadedContent } from "./usePreloadedContent";
-
-// Advanced features
-export { usePrefetch } from "./usePrefetch";
-export { useOptimisticUpdates } from "./useOptimisticUpdates";
+// For browse-related hooks, import from: @/features/browse
+// For shared component hooks, import from: @/components/shared

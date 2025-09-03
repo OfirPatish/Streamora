@@ -1,28 +1,8 @@
 "use client";
 
-import { useBrowseContent } from "@/features/browse";
+import { useBrowseContent } from "./useBrowseContent";
 import { MOVIE_FILTERS, SERIES_FILTERS } from "@/lib/constants";
-
-// Simple types for listing data
-interface Movie {
-  id: number;
-  title: string;
-  overview: string;
-  release_date: string;
-  vote_average: number;
-  poster_path: string;
-  backdrop_path?: string;
-}
-
-interface Series {
-  id: number;
-  name: string;
-  overview: string;
-  first_air_date: string;
-  vote_average: number;
-  poster_path: string;
-  backdrop_path?: string;
-}
+import { Movie, Series } from "../types";
 
 interface UsePreloadedContentProps {
   type: "movie" | "series";

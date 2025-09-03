@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Plus,
-  Heart,
-  Volume2,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getTMDBImageUrl } from "@/lib/api";
 import Link from "next/link";
@@ -48,9 +41,7 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
   };
 
   const handlePrevious = () => {
-    setCurrentIndex(
-      (prev) => (prev - 1 + featuredContent.length) % featuredContent.length
-    );
+    setCurrentIndex((prev) => (prev - 1 + featuredContent.length) % featuredContent.length);
     setIsAutoPlaying(false);
   };
 
@@ -67,18 +58,11 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
     "backdrop",
     "original"
   );
-  const href =
-    currentContent.type === "movie"
-      ? `/movies/${currentContent.id}`
-      : `/series/${currentContent.id}`;
+  const href = currentContent.type === "movie" ? `/movies/${currentContent.id}` : `/series/${currentContent.id}`;
 
   // Truncate description for better display
-  const truncateDescription = (
-    description: string | undefined,
-    maxLength: number = 200
-  ) => {
-    if (!description || description.length <= maxLength)
-      return description || "";
+  const truncateDescription = (description: string | undefined, maxLength: number = 200) => {
+    if (!description || description.length <= maxLength) return description || "";
     return description.substring(0, maxLength).trim() + "...";
   };
 
@@ -87,18 +71,13 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
       {/* Backdrop Image */}
       <div className="absolute inset-0">
         {backdropUrl ? (
-          <img
-            src={backdropUrl}
-            alt={currentContent.title}
-            className="w-full h-full object-cover"
-          />
+          <img src={backdropUrl} alt={currentContent.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
         )}
 
         {/* Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/10 to-transparent" />
       </div>
 
       {/* Content Overlay */}
@@ -106,15 +85,11 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
         <div className="max-w-4xl">
           <div className="space-y-4">
             {/* Title */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4">
-              {currentContent.title}
-            </h1>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4">{currentContent.title}</h1>
 
             {/* Synopsis */}
             <p className="text-white/90 text-lg md:text-xl max-w-2xl leading-relaxed mb-6">
-              {truncateDescription(
-                currentContent.overview || currentContent.description
-              )}
+              {truncateDescription(currentContent.overview || currentContent.description)}
             </p>
 
             {/* Action Buttons */}
@@ -123,37 +98,21 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
                 <Button
                   size="lg"
                   variant="default"
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 h-14"
                 >
                   <Play className="h-5 w-5 mr-2 fill-current" />
                   Play Now
                 </Button>
               </Link>
 
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-12 w-12 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
-                >
-                  <Plus className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-12 w-12 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
-                >
-                  <Heart className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-12 w-12 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
-                >
-                  <Volume2 className="h-5 w-5" />
-                </Button>
-              </div>
+              {/* Add to Watchlist Button */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-14 w-14 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
+              >
+                <Plus className="h-6 w-6" />
+              </Button>
             </div>
           </div>
         </div>
@@ -189,9 +148,7 @@ export function HeroBanner({ featuredContent }: HeroBannerProps) {
                 key={index}
                 onClick={() => handleIndexChange(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? "bg-red-600 scale-125"
-                    : "bg-white/50 hover:bg-white/75"
+                  index === currentIndex ? "bg-red-600 scale-125" : "bg-white/50 hover:bg-white/75"
                 }`}
               />
             ))}

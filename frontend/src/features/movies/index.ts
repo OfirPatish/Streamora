@@ -9,11 +9,7 @@ export { MovieDetail } from "./components/MovieDetail";
 export { useMovieDetails } from "./hooks/useMovieDetails";
 
 // Types
-export type {
-  MovieDetails,
-  MovieDetailProps,
-  MovieDetailLayoutProps,
-  MoviePerson,
-  CastMember,
-  MovieCastListProps,
-} from "./types";
+export * from "./types";
+
+// Services
+export { ContentService } from "@/services";

@@ -13,10 +13,7 @@ if (result.error) {
   console.error("❌ Error loading .env file:", result.error);
 } else {
   console.log("✅ .env file loaded successfully");
-  console.log(
-    "🔑 Environment variables loaded:",
-    Object.keys(result.parsed || {})
-  );
+  console.log("🔑 Environment variables loaded:", Object.keys(result.parsed || {}));
 }
 
 import express from "express";

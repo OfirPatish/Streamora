@@ -13,9 +13,6 @@ export {
   ContentGrid,
   ContentCarousel,
   VideoModal,
-  PaginatedContentSection,
-  MoviesContent,
-  SeriesContent,
 } from "./shared";
 
 // UI components
